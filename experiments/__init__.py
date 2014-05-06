@@ -88,14 +88,13 @@ import time
 
 myConfig = Configuration.Configuration("../config.csv")
 myLogger = Logger.Logger()
-myComModule = #fill in the blanks
-myInstallationThread = Installation.Installation(myConfig, myLogger, myComModule)
+#myComModule = #fill in the blanks
+myInstallationThread = Installation.Installation(myConfig, myLogger)#, myComModule)
 myLogger.obtainEmitterList(myInstallationThread.getEmitterList())
 myInstallationThread.start()
-#myInstallation.stopOperation()
-#time.sleep(5)
-#myInstallationThread.stop()
-#print "stop issued"
-#myInstallationThread.join()
-#print "done"
+time.sleep(1)
+myInstallationThread.stop()
+print "stop issued"
+myInstallationThread.join()
+print "done"
 
