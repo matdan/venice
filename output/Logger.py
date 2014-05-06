@@ -10,13 +10,19 @@ class Logger(object):
     '''
 
 
-    def __init__(self, emitterList):
+    def __init__(self):
         '''
         Constructor
         '''
+        self.emitterStates = None
         
+    
+    def obtainEmitterList(self, emitterList):
         self.emitterStates = self.createEmitterList(emitterList)
-        
+    
+    def getEmitterList(self):
+        return self.emitterStates
+    
     def createEmitterList(self, emitterList):
         emitterStates = list()
         for i in range(len(emitterList)):

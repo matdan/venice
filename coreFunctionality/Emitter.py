@@ -34,8 +34,11 @@ class Emitter(object):
     communicates state to installation
     """
     def determineStatus(self):
+        print "determining status of emiiter " + str(self.arrLocation)
         #retrieve targets in emitter-range from installation as dictionary
         trackedTargetsInRange = self.installation.targetsInRange(self.range)
+        print "targets in Range: " + str(trackedTargetsInRange)
+        print "emitter-range: " +str(self.range)
         
         if trackedTargetsInRange:
             #emitter has targets in range
@@ -54,18 +57,19 @@ class Emitter(object):
             #no targets in range
             
             self.beSlave()
-                
+        print "emitter is " + str(self.state)
         self.communicateState()
     
     """
     determine which slaves are influenced by master-emitter
     """
     def getSlaves(self):
+        print "looking for slaves"
         self.slaves = list()
         #path 1 
         i=0
-        x=self.arrLocation[0]        
-        y=self.arrLocation[1]
+        x=int(self.arrLocation[0])
+        y=int(self.arrLocation[1])
         while i < self.influence:
             i += 1
             
@@ -152,7 +156,8 @@ class Emitter(object):
     
                     
                 i += 1
-                
+        
+        print "my slaves:" + str(self.slaves)
     """
     targetList is a dictionary of targets k = targetID v = point
     returns ID/key of closest Point
@@ -188,17 +193,17 @@ class Emitter(object):
             
         minYLoc = self.installation.getEmitterPhyLocation( myArrX, myArrY - 1 )
         if not minYLoc:
-            minY = myPhyX - self.installation.getESpacing()
+            minY = myPhyY - self.installation.getESpacing()
         else:
             minY = minYLoc[1]
         
         maxYLoc = self.installation.getEmitterPhyLocation( myArrX, myArrY + 1 )
         if not maxYLoc:
-            maxY = myPhyX + self.installation.getESpacing()
+            maxY = myPhyY + self.installation.getESpacing()
         else:
             maxY = maxYLoc[1]
         
-        self.range = (minX, maxX, minY, maxY)
+        self.range = (int(minX), int(maxX), int(minY), int(maxY))
         #print "self.range = " + str(self.range)
         
     def updateAngle(self, masterOrSlave):
@@ -218,14 +223,19 @@ class Emitter(object):
                 self.angle = 0
             else:
                 self.angle = comComb/i
+        print "angle: " + str(self.angle)
                                             
     def commandSlaves(self):
+        print "slave commanded"
         if self.state:
+            print "slave commanded2"
             for slave in self.slaves:
+                print "slave commanded3"
                 slave.receiveCommand(self.angle, self.arrLocation)
     
     def receiveCommand(self, angle, origin):
-        distance = abs(self.arrLocation[0] - origin[0]) + abs(self.arrLocation[1] - origin[1])
+        print "command received"
+        distance = abs(int(self.arrLocation[0]) - int(origin[0])) + abs(int(self.arrLocation[1]) - int(origin[1]))
         self.commands.append(angle * self.commandEffect(distance))
     
     def commandEffect(self, distance):
@@ -237,13 +247,13 @@ class Emitter(object):
     #def communicateStatus(self):
     
     def angleToTarget(self):
-        target2D = (self.target[0], self.target[2])
-        location2D = (self.phyLocation[0], self.phyLocation[2])
+        target3D = self.installation.getTarget(self.target)
+        target2D = (int(target3D[0]), int(target3D[2]))
+        location2D = (int(self.phyLocation[0]), int(self.phyLocation[2]))
         
         targetVector = vm.createVector(location2D, target2D)
         
-        targetAngle = vm.angle_between((0,-1), targetVector)
-        
+        targetAngle = vm.angleBetween2D((0,-1), targetVector)
         return targetAngle
         
     def beSlave(self):
@@ -269,6 +279,7 @@ class Emitter(object):
 
     def communicateAngle(self):
         self.installation.logger.receiveState(self)
+        self.installation.getComModule().updateEmitter(self.servoArduinoID, self.relayArduinoID, self.servoPin, self.relayPin, self.state, self.angle)
     
     def getState(self):
         return self.state

@@ -14,9 +14,9 @@ def getPointDistance ( point1, point2 ):
     return getVectorMagnitude(createVector(point1, point2))
     
 def createVector ( pointStart, pointEnd ):
-    vector = ()
+    vector = []
     for i,j in zip(pointEnd, pointStart):
-        vector.append(i-j)
+        vector.append(int(i)-int(j))
     return vector
 
 def getVectorMagnitude( vector ):
@@ -68,5 +68,9 @@ def angle2DVector(vec):
         return math.pi * 1.5 + math.atan(abs(x)/abs(y))
     
 def angleBetween2D(v1,v2):
-    return angle2DVector(v2) - angle2DVector(v1)
+    av1 = angle2DVector(v1)
+    av2 = angle2DVector(v2)
+    print "angle - calc : " + str(av2) + " - " + str(av1)
+    angle = av2 - av1
+    return angle
     

@@ -57,52 +57,45 @@ myList = ( ( (0, 14.2324), (0, -12), (1, 12.1), (0, -12), (1, 12.1), (0, -12), (
 
 printArray(myList)
 """
+"""
+import Tkinter as tk
+import time
 
-from Tkinter import *
+root = tk.Tk()
 
-class App:
+var = tk.StringVar()
+var.set("fgh")
 
-    def __init__(self, master):
+status = tk.Label(root, textvariable = var)
+status.pack()
+root.update()
+time.sleep(3)
+var.set("asd")
+root.update()
+"""
 
-        frame = Frame(master)
-        frame.pack()
-
-        self.button = Button(
-            frame, text="QUIT", fg="red", command=frame.quit
-            )
-        self.button.pack(side=LEFT)
-
-        self.hi_there = Button(frame, text="Hello", command=self.say_hi)
-        self.hi_there.pack(side=LEFT)
-
-    def say_hi(self):
-        print "hi there, everyone!"
-
-root = Tk()
-
-app = App(root)
-
-root.mainloop()
-root.destroy() # optional; see description below
-
-
-
-"""MAIN
+#MAIN
 from coreFunctionality import Configuration
 from coreFunctionality import Installation
+#import comModule...
+from output import GUInterface
+from output import Logger
 import threading
 import time
 
+#updateGUI = threading.Event()
+#emitterStates_lock = threading.Lock()
+
 myConfig = Configuration.Configuration("../config.csv")
-#myInstallation = Installation.Installation(myConfig)
-myThread = Installation.Installation(myConfig)
-print "thread defined"
-myThread.start()
-print "thread started"
+myLogger = Logger.Logger()
+myComModule = #fill in the blanks
+myInstallationThread = Installation.Installation(myConfig, myLogger, myComModule)
+myLogger.obtainEmitterList(myInstallationThread.getEmitterList())
+myInstallationThread.start()
 #myInstallation.stopOperation()
-time.sleep(5)
-myThread.stop()
-print "stop issued"
-myThread.join()
-print "done"
-"""
+#time.sleep(5)
+#myInstallationThread.stop()
+#print "stop issued"
+#myInstallationThread.join()
+#print "done"
+

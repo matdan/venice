@@ -25,22 +25,26 @@ class Installation(threading.Thread):
     '''
     initiate installation object
     '''
-    def __init__(self, configuration):
+    def __init__(self, configuration, logger, comModule):
         super(Installation, self).__init__()
         self.configuration = configuration
         self.eSpacing = 400
         self.rSpacing = 1500
         self.masters = []
         self.slaves = []
+        self.comModule = comModule
         self.emitters = list()
         self.initiateEmitters()
         self.initiateEmittersPhase2()
-        self.trackedTargets = {"ID1":(500, 750)}
+        self.trackedTargets = {"ID1":(4000, 1750, 1000), "ID2":(1000, 1750, 1000), "ID3":(4000, 3500, 1000)}
         self.operating = False
-        self.logger = log.Logger(self.emitters)
+        self.logger = logger
         self._stop = threading.Event()
         #self.operate()
 
+    def getComModule(self):
+        return self.comModule
+    
     def run(self):
         self.operate()
     
@@ -172,13 +176,19 @@ class Installation(threading.Thread):
         while not self.stopped():
             #print self.stopped()
             self.updateEmitters()
-            self.logger.printArray(self.logger.emitterStates)
+            self.logger.printArray(self.logger.getEmitterList())
     
-
+    def getTarget(self, targetID):
+        return self.trackedTargets[targetID]
 
     def targetsInRange(self, eRange):
         targets = {}
+        print "range: " + str(eRange)
         for key, target in self.trackedTargets.iteritems():
-            if eRange[0] < target[0] < eRange[1] and eRange[2] < target[1] < eRange[3]:
+            print target
+            if eRange[0] < target[0] and target[0] < eRange[1] and eRange[2] < target[1] and target[1] < eRange[3]:
+                print "True"
                 targets[key] = target
+            else: print "False"
+        return targets
                 
