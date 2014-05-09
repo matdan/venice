@@ -48,6 +48,6 @@ myCommunicationThread.stop()
 myInstallationThread.join()
 myCommunicationThread.join()
 
-gR.myEStats.printStatuses()
+#gR.myEStats.printStatuses()
 
 print "done"

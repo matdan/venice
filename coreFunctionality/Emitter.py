@@ -10,7 +10,7 @@ import GlobalResources as gR
 
 class Emitter(object):
     
-    def __init__(self, installation, phyLocation, arrLocation, defaultAngle, maxTilt, servoArduinoID, servoPin, relayArduinoID, relayPin ):
+    def __init__(self, installation, phyLocation, arrLocation, defaultAngle, maxTilt, servoArduinoID, servoPin, relayArduinoID, relayPin, rotationMod ):
         self.phyLocation = phyLocation          #coorinates of physical location
         #print "initiating emitter at: " + str(self.phyLocation)
         self.arrLocation = arrLocation          #coordinates in emitterArray
@@ -21,7 +21,8 @@ class Emitter(object):
         self.servoArduinoID = servoArduinoID
         self.relayPin = relayPin
         self.servoPin = servoPin
-        self.state = 0                           #TRUE for master, FALSE for slave
+        self.state = 0             
+        self.rotationMod = rotationMod              #TRUE for master, FALSE for slave
         #self.range = self.determineRange()       #list of (xMin, xMax, yMin, yMax)
         self.target = None                      #key of tracked target in installation's target dictionary
         self.influence = 2
@@ -40,8 +41,18 @@ class Emitter(object):
         #print "determining status of emiiter " + str(self.arrLocation)
         #retrieve targets in emitter-range from installation as dictionary
         trackedTargetsInRange = self.installation.targetsInRange(self.range)
+#        try:
+#            if trackedTargetsInRange.values()[0][0] > self.range[1]:
+#                print 'problem'
+#        except:
+#            pass
+#        else:
+#            print 'tried'
+            
         #print "targets in Range: " + str(trackedTargetsInRange)
         #print "emitter-range: " +str(self.range)
+        
+
         
         if trackedTargetsInRange:
             #emitter has targets in range
@@ -57,12 +68,13 @@ class Emitter(object):
                 self.beMaster()
                 
         else:
+            self.target = None
             extRange = [ self.range[0] - self.rangeExtension, self.range[1] + self.rangeExtension, self.range[2], self.range[3]  ]
             
             #print "Range = " + str(self.range)
             #print "extRange = " + str(extRange)
             trackedTargetsInExtRange = self.installation.targetsInRange(extRange)
-            
+
             if trackedTargetsInExtRange:
                 #print "target in ext range"
                 self.secondaryTarget = self.determineClosestTarget(trackedTargetsInExtRange)
@@ -161,6 +173,9 @@ class Emitter(object):
             maxY = maxYLoc[1]
         
         self.range = (int(minX), int(maxX), int(minY), int(maxY))
+        #print "pL: ", self.phyLocation
+        #print "r: ", self.range
+        
         #print "self.arrLocation = " + str(self.arrLocation)
         #print "self.range = " + str(self.range)
         
@@ -173,6 +188,8 @@ class Emitter(object):
                 self.setAngle(self.angleToTarget(self.installation.getTarget(self.target)))
             elif self.secondaryTarget:
                 distance = self.targetXDistance(self.secondaryTarget)
+                #if self.arrLocation[0] == '0' and self.arrLocation[1] == '4':
+                #print distance
                 #print "distance " + str(distance)
                 #maxAngle = abs(self.angleToTarget( [ float(self.range[1])-float(self.phyLocation[0]),0, 1200 ] ))
                 maxAngle = abs(self.angleToTarget( [ float(self.range[1]),0, 1200 ] ))
@@ -180,6 +197,8 @@ class Emitter(object):
                 if distance > 0:
                     relevantRange = self.range[1]
                     outOfRange = distance - (int(relevantRange) - int(self.phyLocation[0]))
+                    #print outOfRange
+                    #print vm.mapToDomain(outOfRange, 0, float(abs(relevantRange-float(self.phyLocation[0]))), maxAngle, 0)
                     self.setAngle(vm.mapToDomain(outOfRange, 0, float(abs(relevantRange-float(self.phyLocation[0]))), maxAngle, 0))
                 elif distance < 0:
                     relevantRange = self.range[0]
@@ -205,7 +224,7 @@ class Emitter(object):
         #print "angle: " + str(self.angle)
     
     def setAngle(self, angle):
-        self.angle = self.defaultAngle + math.degrees(angle)
+        self.angle = int(float(self.defaultAngle)*float(self.rotationMod) + math.degrees(angle))
                                             
     def commandSlaves(self):
         #print "slave commanded"

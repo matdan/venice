@@ -30,8 +30,8 @@ class Installation(threading.Thread):
     def __init__(self, configuration):#, comModule):
         super(Installation, self).__init__()
         self.configuration = configuration
-        self.eSpacing = 400
-        self.rSpacing = 1500
+        self.eSpacing = self.configuration.getESpacing()
+        self.rSpacing = self.configuration.getRSpacing()
         self.masters = []
         self.slaves = []
         #self.comModule = comModule
@@ -56,7 +56,8 @@ class Installation(threading.Thread):
         for i in self.configuration.getEmitterConfig():
             self.emitters.append(list())
             for j in i:
-                self.emitters[-1].append( Emitter.Emitter( self, ( j[0], j[1], j[2] ), ( j[3], j[4] ), j[5], j[6], j[7], j[8], j[9], j[10] ) )
+                self.emitters[-1].append( Emitter.Emitter( self, ( j[0], j[1], j[2] ), ( j[3], j[4] ), j[5], j[6], j[7], j[8], j[9], j[10], j[11] ) )
+                #print self.emitters[-1][-1].getLocation()
     
     def initiateEmittersPhase2(self):
         for emitterRow in self.emitters:
@@ -185,10 +186,12 @@ class Installation(threading.Thread):
         #print "range: " + str(eRange)
         for key, target in self.trackedTargets.iteritems():
             #print target
+            #print eRange
+            #print target
             if eRange[0] < target[0] and target[0] < eRange[1] and eRange[2] < target[1] and target[1] < eRange[3]:
                 #print "True"
                 targets[key] = target
-            #else: #print "False"
+            #else: print "False"
         return targets            
     
     def getTarget(self, targetID):
@@ -211,12 +214,14 @@ class EmitterStatuses(object):
     def generateEntries(self, configuration):
         statuses = {}
         emitterConfig = configuration.getEmitterConfig()
+        #print emitterConfig
         i = 0
         for row in configuration.getEmitterConfig():
             j = 0
             for eConf in row:
-                
+                #print i, j
                 statuses[ ( int(emitterConfig[i][j][3]), int(emitterConfig[i][j][4]) ) ] = [ emitterConfig[i][j][7], emitterConfig[i][j][9], emitterConfig[i][j][8], emitterConfig[i][j][10], 0, emitterConfig[i][j][5] ]
+                #print statuses[ ( int(emitterConfig[i][j][3]), int(emitterConfig[i][j][4]) ) ]
                 #dictionary layout
                 #[arrayLocation] : [ servoArduinoID, relayArduinoID, servoPin, relayPin, state, angle(DEG) ]
                 j += 1
