@@ -58,6 +58,7 @@ class Emitter(object):
                 
         else:
             extRange = [ self.range[0] - self.rangeExtension, self.range[1] + self.rangeExtension, self.range[2], self.range[3]  ]
+            
             #print "Range = " + str(self.range)
             #print "extRange = " + str(extRange)
             trackedTargetsInExtRange = self.installation.targetsInRange(extRange)
@@ -173,18 +174,20 @@ class Emitter(object):
             elif self.secondaryTarget:
                 distance = self.targetXDistance(self.secondaryTarget)
                 #print "distance " + str(distance)
-                maxAngle = abs(self.angleToTarget( [ float(self.range[1])-float(self.phyLocation[0]),0, 1000 ] ))
+                #maxAngle = abs(self.angleToTarget( [ float(self.range[1])-float(self.phyLocation[0]),0, 1200 ] ))
+                maxAngle = abs(self.angleToTarget( [ float(self.range[1]),0, 1200 ] ))
                 #print "maxAngle = " + str(vm.radToDeg(maxAngle))
                 if distance > 0:
                     relevantRange = self.range[1]
-                    outOfRange = distance - relevantRange
-                    self.setAngle(vm.mapToDomain(outOfRange, 0, abs(relevantRange), maxAngle, 0))
+                    outOfRange = distance - (int(relevantRange) - int(self.phyLocation[0]))
+                    self.setAngle(vm.mapToDomain(outOfRange, 0, float(abs(relevantRange-float(self.phyLocation[0]))), maxAngle, 0))
                 elif distance < 0:
                     relevantRange = self.range[0]
-                    outOfRange = distance + relevantRange
+                    outOfRange = int(self.phyLocation[0]) - int(relevantRange) + distance
                     #print "oor " + str(outOfRange)
-                    
-                    self.setAngle( vm.mapToDomain(outOfRange, 0, -1 * float(abs(relevantRange)), -1 * float(maxAngle), 0) )
+                    #print "reR ", relevantRange
+                    #print self.phyLocation
+                    self.setAngle( vm.mapToDomain(outOfRange, 0, -1 * float(abs(relevantRange-float(self.phyLocation[0]))), -1 * float(maxAngle), 0) )
                 else:
                     raise Exception("Evil's afoot!")
                 
