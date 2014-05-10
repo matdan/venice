@@ -22,13 +22,14 @@ class Logger(threading.Thread):
         super(Logger, self).__init__()
         #self.emitterStates = None
         self._stopFlag = threading.Event()
+        gR.emitterUpdatedFlag.set()
         
     def run(self):
         while not self._stopFlag.isSet():
             if gR.emitterUpdatedFlag.isSet():
                 gR.emitterUpdatedFlag.clear()
                 oList = self.createOrederedList(gR.myEStats)
-                #self.printArray(oList)
+                self.printArray(oList)
                 self.writeEmitterFile(oList)
                 self.writeTargetFile()
     
@@ -119,8 +120,3 @@ class Logger(threading.Thread):
                     spamwriter.writerow(nextRow)
         except:
             print "file write error"
-        
-        
-                 
-        
-        

@@ -73,7 +73,7 @@ time.sleep(3)
 var.set("asd")
 root.update()
 """
-
+"""
 #input experiment
 
 import cmd
@@ -82,9 +82,7 @@ class InstallationControll(cmd.Cmd):
    
     
     def do_w(self, person):
-        """
         Greet the named person
-        """
         if person:
             print "hi,", person
         else:
@@ -99,7 +97,7 @@ class InstallationControll(cmd.Cmd):
 if __name__ == '__main__':
     InstallationControll().cmdloop()
     print "done"
-
+"""
 
 
 

@@ -18,29 +18,11 @@ class Configuration(object):
         '''
         self.eSpacing = 235
         self.rSpacing = 1829
-        self.config = self.readConfig(filename)
         self.emitterParams = 12
+        self.loadConfig(filename)
         
-        """
-        self.emitterConfig = [ [ [ row[i] for row in self.config[ j*self.emitterParams:j*self.emitterParams+self.emitterParams ] ] for i in range( len( self.config[ j * self.emitterParams ] ) ) ] for j in range( len( self.config ) / self.emitterParams ) ]
-        #cleanConfig
-        #print
-        for row in self.emitterConfig:
-            print row
-        #print self.emitterConfig
-        for i in range(len(self.emitterConfig)):
-            #print filter(None, self.emitterConfig[i])
-            for j in range(len(self.emitterConfig[i])):
-                self.emitterConfig[i][j] = filter(None, self.emitterConfig[i][j])
-        for i in range(len(self.emitterConfig)):
-            #print filter(None, self.emitterConfig[i])
-            self.emitterConfig[i] = filter(None, self.emitterConfig[i])
-            
-        #print
-        for row in self.emitterConfig:
-            print row
-        """
-        ml = [self.config[i:i+self.emitterParams] for i in range(0, len(self.config), self.emitterParams)] 
+    def createEmitterConfig(self, config):
+        ml = [config[i:i+self.emitterParams] for i in range(0, len(config), self.emitterParams)] 
         ml = [map(list, zip(*row)) for row in ml]
         ml2 = []
         for row in ml:
@@ -51,8 +33,7 @@ class Configuration(object):
             if len(newRow) > 0:
                 ml2.append(newRow)
         
-        self.emitterConfig = ml2
-        
+        return ml2
         
     def readConfig(self, filename):
         #print "start to read file: " + filename
@@ -75,3 +56,35 @@ class Configuration(object):
     
     def getRSpacing(self):
         return self.rSpacing
+    
+    def updateDefaultAngle(self, arrLoc, newDefAng):
+        self.emitterConfig[int(arrLoc[0])][int(arrLoc[1])][5] = newDefAng
+    
+    def writeConfig(self, filename):
+        outputList = []
+        print self.emitterConfig
+        
+        for h, row in enumerate(self.emitterConfig):
+            for i in range(self.emitterParams):
+                outputList.append([])
+                
+                #for emitter in row:
+                    #outputList[-1].append('')
+                    
+            for emitter in row:
+                print "emitter ",emitter
+                
+                for i, param in  enumerate(emitter):
+                    outputList[h*self.emitterParams+i].append(param)
+                
+                
+        
+        with open(filename, 'wb') as csvfile:
+            spamwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            for row in outputList:
+                spamwriter.writerow(row)
+                
+    def loadConfig(self, filename):
+        self.config = self.readConfig(filename)
+        self.emitterConfig = self.createEmitterConfig(self.config)
+        

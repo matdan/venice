@@ -32,12 +32,12 @@ class Emitter(object):
         self.secondaryTarget = None
         self.rangeExtension = self.installation.getRSpacing()
         
-    """
-    checks for targets in range
-    sets state
-    communicates state to installation
-    """
     def determineStatus(self):
+        """
+        checks for targets in range
+        sets state
+        communicates state to installation
+        """
         #print "determining status of emiiter " + str(self.arrLocation)
         #retrieve targets in emitter-range from installation as dictionary
         trackedTargetsInRange = self.installation.targetsInRange(self.range)
@@ -86,13 +86,24 @@ class Emitter(object):
         #print "emitter is " + str(self.state)
         self.communicateState()
     
+    def changeDefAngle(self, angle):
+        '''
+        changes emitter's self.defaultAngle by angle
+        '''
+        self.defaultAngle += angle
+        print "command reached changeDefAngle in emitter ", self.arrLocation, "\nnew defaultAngle = ", self.defaultAngle
+        self.updateAngle(self.state)
+        self.communicateAngle()
+        print "angle after defAng change ",self.angle
+        gR.emitterUpdatedFlag.set()
+    
     def targetXDistance(self, targetID):
         return float(self.installation.getTarget(targetID)[0]) - float(self.phyLocation[0])
     
-    """
-    determine which slaves are influenced by master-emitter
-    """
     def getSlaves(self):
+        """
+        determine which slaves are influenced by master-emitter
+        """
         #print "looking for slaves"
         self.slaves = list()
         x=int(self.arrLocation[0])
@@ -127,11 +138,11 @@ class Emitter(object):
             else:
                 break       
 
-    """
-    targetList is a dictionary of targets k = targetID v = point
-    returns ID/key of closest Point
-    """
     def determineClosestTarget(self, targetList):
+        """
+        targetList is a dictionary of targets k = targetID v = point
+        returns ID/key of closest Point
+        """
         distances = {}
         for key in targetList.keys():
             distances[key] = vm.getPointDistance(self.phyLocation, targetList[key])
@@ -218,14 +229,14 @@ class Emitter(object):
                 comComb += command
                 i += 1
             if i == 0:
-                self.angle = 0
+                self.setAngle(0)
             else:
-                self.angle = comComb/i
-        #print "angle: " + str(self.angle)
-    
+                self.setAngle(comComb/i)
+        
     def setAngle(self, angle):
         self.angle = int(float(self.defaultAngle)*float(self.rotationMod) + math.degrees(angle))
-                                            
+        print "angle being set to: ", self.angle, " for emitter ", self.arrLocation
+        
     def commandSlaves(self):
         #print "slave commanded"
         if self.state:
@@ -298,3 +309,12 @@ class Emitter(object):
     
     def getAngle(self):
         return self.angle
+    
+    def getDefaultAngle(self):
+        '''
+        returns emitter's default angle
+        '''
+        return self.defaultAngle
+    
+    def getArrLoc(self):
+        return self.arrLocation
