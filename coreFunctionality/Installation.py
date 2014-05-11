@@ -188,7 +188,6 @@ class Installation(threading.Thread):
         command = deepcopy(gR.directCommand)
         gR.lockDirectCommand.release()
         gR.newCommandFlag.clear()
-        print "command in Installation.followCommand(): ", command
         try: self.getEmitter(command[0][0], command [0][1]).changeDefAngle(command[1])
         except: print "command failed in Installation.followCommand"
         

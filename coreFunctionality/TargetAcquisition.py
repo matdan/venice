@@ -37,9 +37,9 @@ class FakeData(threading.Thread):
         """
         
         #fakeData2
-        for i in range(1):
+        for i in range(800):
             gR.lockMyTargets.acquire(1)
-            gR.myTargets = {}#1:[-1500+i*10,1000,1200], 2:[900,0+i*10,1200], 3:[3600-i*5,3000-i*4,1200] }
+            gR.myTargets = { 1:[-1500+i*10,1000,1200], 2:[900,0+i*10,1200], 3:[3600-i*5,3000-i*4,1200] }
             gR.lockMyTargets.release()
             gR.newTargetsFlag.set()
             

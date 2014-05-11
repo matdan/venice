@@ -91,10 +91,10 @@ class Emitter(object):
         changes emitter's self.defaultAngle by angle
         '''
         self.defaultAngle += angle
-        print "command reached changeDefAngle in emitter ", self.arrLocation, "\nnew defaultAngle = ", self.defaultAngle
+        #print "command reached changeDefAngle in emitter ", self.arrLocation, "\nnew defaultAngle = ", self.defaultAngle
         self.updateAngle(self.state)
         self.communicateAngle()
-        print "angle after defAng change ",self.angle
+        #print "angle after defAng change ",self.angle
         gR.emitterUpdatedFlag.set()
     
     def targetXDistance(self, targetID):
@@ -204,7 +204,7 @@ class Emitter(object):
                 #print "distance " + str(distance)
                 #maxAngle = abs(self.angleToTarget( [ float(self.range[1])-float(self.phyLocation[0]),0, 1200 ] ))
                 maxAngle = abs(self.angleToTarget( [ float(self.range[1]),0, 1200 ] ))
-                #print "maxAngle = " + str(vm.radToDeg(maxAngle))
+                #print "maxAngle = ", vm.radToDeg(maxAngle)
                 if distance > 0:
                     relevantRange = self.range[1]
                     outOfRange = distance - (int(relevantRange) - int(self.phyLocation[0]))
@@ -234,8 +234,8 @@ class Emitter(object):
                 self.setAngle(comComb/i)
         
     def setAngle(self, angle):
-        self.angle = int(float(self.defaultAngle)*float(self.rotationMod) + math.degrees(angle))
-        print "angle being set to: ", self.angle, " for emitter ", self.arrLocation
+        self.angle = float(self.defaultAngle)*float(self.rotationMod) + math.degrees(angle)
+
         
     def commandSlaves(self):
         #print "slave commanded"
@@ -243,13 +243,14 @@ class Emitter(object):
             #print "slave commanded2"
             for slave in self.slaves:
                 #print "slave commanded3"
-                slave.receiveCommand(self.angle, self.arrLocation)
+                slave.receiveCommand(math.radians(self.angle), self.arrLocation)
     
     def receiveCommand(self, angle, origin):
         #print "command received"
         self.commands = []
         distance = abs(int(self.arrLocation[0]) - int(origin[0])) + abs(int(self.arrLocation[1]) - int(origin[1]))
         self.commands.append(angle * self.commandEffect(distance))
+        
     
     def commandEffect(self, distance):
         effect = (math.sin((self.influence/2+distance)*math.pi/self.influence)/2+0.5)
@@ -267,10 +268,13 @@ class Emitter(object):
         targetVector = vm.createVector(location2D, target2D)
         
         targetAngle = vm.angleBetween2D([0,-1], targetVector)
+        
+        
         return targetAngle
         
     def beSlave(self):
         self.commands = []
+        self.bulbActive = False
         if self.state:
             self.state = False
             
@@ -282,6 +286,8 @@ class Emitter(object):
         if self.target:
             if not self.bulbActive:
                 self.bulbActive = True
+        else:
+            self.bulbActive = False
     
     def getBulbState(self):
         return self.bulbActive

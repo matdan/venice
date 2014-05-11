@@ -72,6 +72,7 @@ def angleBetween2D(v1,v2):
     av1 = angle2DVector(v1)
     av2 = angle2DVector(v2)
     angle = av2 - av1
+    #print "angle at vm ", angle
     return angle
     
 def mapToDomain (value, min1, max1, min2, max2 ):
