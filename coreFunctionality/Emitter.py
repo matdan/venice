@@ -234,7 +234,7 @@ class Emitter(object):
                 self.setAngle(comComb/i)
         
     def setAngle(self, angle):
-        self.angle = float(self.defaultAngle)*float(self.rotationMod) + math.degrees(angle)
+        self.angle = float(self.defaultAngle) + math.degrees(angle)*float(self.rotationMod)
 
         
     def commandSlaves(self):
@@ -243,14 +243,13 @@ class Emitter(object):
             #print "slave commanded2"
             for slave in self.slaves:
                 #print "slave commanded3"
-                slave.receiveCommand(math.radians(float(self.angle)), self.arrLocation)
+                slave.receiveCommand( math.radians(float(self.rotationMod)*(float(self.angle)-float(self.defaultAngle))), self.arrLocation )
     
     def receiveCommand(self, angle, origin):
         #print "command received"
         self.commands = []
         distance = abs(int(self.arrLocation[0]) - int(origin[0])) + abs(int(self.arrLocation[1]) - int(origin[1]))
-        self.commands.append(((angle-math.radians(self.defaultAngle)) * self.commandEffect(distance)))
-        
+        self.commands.append((angle) * self.commandEffect(distance))        
     
     def commandEffect(self, distance):
         effect = (math.sin((self.influence/2+distance)*math.pi/self.influence)/2+0.5)
