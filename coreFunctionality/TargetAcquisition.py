@@ -39,13 +39,13 @@ class FakeData(threading.Thread):
         """
         
         #fakeData2
-        for i in range(800):
+        for i in range(1100):
             gR.lockMyTargets.acquire(1)
-            gR.myTargets = { 1:[-1500+i*10,1000,1200]}#, 2:[900,0+i*10,1200], 3:[3600-i*5,3000-i*4,1200] }
+            gR.myTargets ={ 1:[-4000+i*10,600,1200],  2:[8000-i*10,1900,1200]}#, 2:[900,0+i*10,1200]}#, 3:[3600-i*5,3000-i*4,1200] }
             gR.lockMyTargets.release()
             gR.newTargetsFlag.set()
             
-            time.sleep(0.01)
+            time.sleep(0.02)
 
 class SensorData(threading.Thread):
     def __init__(self):
@@ -94,7 +94,7 @@ class DataTest(threading.Thread):
                 
             #finally:
             gR.lockMyTargets.release()
-            time.sleep(0.001)
+            time.sleep(0.004)
 
     def stop(self):
         self._stopFlag.set()
@@ -121,7 +121,6 @@ class DataTest(threading.Thread):
             out = {}
             out[1] = [float(datum[1]) * 1000+1000, float(datum[0]) * 1000,  1200]
             del self.data[0]
+            gR.myTargets = out
         else: self.stop()
-        gR.myTargets = out
-        print gR.myTargets
             

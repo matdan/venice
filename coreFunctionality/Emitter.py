@@ -235,8 +235,7 @@ class Emitter(object):
         
     def setAngle(self, angle):
         self.angle = float(self.defaultAngle) + math.degrees(angle)*float(self.rotationMod)
-
-        
+    
     def commandSlaves(self):
         #print "slave commanded"
         if self.state:
