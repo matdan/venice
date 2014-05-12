@@ -243,7 +243,7 @@ class Emitter(object):
             #print "slave commanded2"
             for slave in self.slaves:
                 #print "slave commanded3"
-                slave.receiveCommand(math.radians(self.angle), self.arrLocation)
+                slave.receiveCommand(math.radians(float(self.angle)), self.arrLocation)
     
     def receiveCommand(self, angle, origin):
         #print "command received"
