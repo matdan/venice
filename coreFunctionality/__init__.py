@@ -80,7 +80,7 @@ if __name__ == '__main__':
     #myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, paths)
     myCommunicationThread = log.Logger()
     
-    myTargetAcquisitionThread = tA.DataTest()
+    myTargetAcquisitionThread = tA.FakeData()
     
     myInstallationThread.start()
     myCommunicationThread.start()

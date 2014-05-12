@@ -249,7 +249,7 @@ class Emitter(object):
         #print "command received"
         self.commands = []
         distance = abs(int(self.arrLocation[0]) - int(origin[0])) + abs(int(self.arrLocation[1]) - int(origin[1]))
-        self.commands.append(angle * self.commandEffect(distance))
+        self.commands.append(((angle-math.radians(self.defaultAngle)) * self.commandEffect(distance)))
         
     
     def commandEffect(self, distance):
