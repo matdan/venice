@@ -228,6 +228,7 @@ class EmitterStatuses(object):
     
     def __init__(self, configuration):
         self.statuses = self.generateEntries(configuration)
+        #print self.statuses
         
     def generateEntries(self, configuration):
         statuses = {}

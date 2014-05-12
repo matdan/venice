@@ -1,6 +1,6 @@
 import glob
 import operator
-#import serial
+import serial
 import sys
 import time
 import threading
@@ -43,13 +43,14 @@ class ArduinoDriver(threading.Thread):
 
 		self.unwrapEmitters(emitters.getStatuses())
 		self.open_ports()
+		#self.updateArduinos()
 		self._stopFlag = threading.Event()
 
 	def run(self):
 		while not self._stopFlag.isSet():
 			if gR.emitterUpdatedFlag.isSet():
-				gR.lockMyEstates.acquire(1)
 				gR.emitterUpdatedFlag.clear()
+				gR.lockMyEstates.acquire(1)
 				try:
 					self.unwrapEmitters(gR.myEStats.getStatuses())
 					self.updateArduinos()
@@ -76,14 +77,14 @@ class ArduinoDriver(threading.Thread):
 
 		# fill the data_store with emitters
 		for e in emitters:
-			print type(e[angleIndex])
+			#print type(e[angleIndex])
 			angle = int(float(e[angleIndex]))
-			angle = 90 + angle
+			#angle = angle
 			# constrain the servo angle, just in case
-			if angle > 135:
-				angle = 135
-			elif angle < 45:
-				angle = 45
+			#if angle > 180:
+				#angle = 180
+			#elif angle < 0:
+			#	angle = 0
 
 			# store the servo and bulb data in our complex data array
 			servoArduinoId = int(float(e[servoArduinoIndex]))
@@ -100,10 +101,10 @@ class ArduinoDriver(threading.Thread):
 		# if enough time has elapsed since the last update, update arduinos
 		elapsed = (time.clock() - self.last_update_time)
 		if elapsed > self.arduino_delay:
-			print 'data_store:'
-			print self.data_store
-			print 'devices:'
-			print self.devices
+			#print 'data_store:'
+			#print self.data_store
+			#print 'devices:'
+			#print self.devices
 			# iterate over arduinos to send data to
 			for device,datum in zip(self.devices,self.data_store):
 				serial_data = ''
@@ -111,13 +112,13 @@ class ArduinoDriver(threading.Thread):
 				# the string of data sent over serial
 				# states and angles are padded to 3 spaces
 				for data in sorted_data:
-					print str(data[1])
+					#print str(data[1])
 					serial_data = serial_data + str(data[1]).zfill(3)
 				serial_data = serial_data + "\0"
 				# send the data to an arduino
 				device.port.write(serial_data)
-				print serial_data
-				print 'hi'
+				#print serial_data
+				#print 'hi'
 
 			# update the clock if you need a delay
 			self.last_update_time = time.clock()
