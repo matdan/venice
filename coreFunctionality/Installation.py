@@ -159,6 +159,7 @@ class Installation(threading.Thread):
             if gR.newCommandFlag.isSet():
                 self.followCommand()
                 self.updateEmitters()
+                gR.emitterUpdatedFlag.set()
             if gR.saveConfigFlag.isSet():
                 gR.saveConfigFlag.clear()
                 self.saveConfig()
@@ -181,8 +182,8 @@ class Installation(threading.Thread):
         command = deepcopy(gR.directCommand)
         gR.lockDirectCommand.release()
         gR.newCommandFlag.clear()
-        try: self.getEmitter(command[0][0], command [0][1]).changeDefAngle(command[1])
-        except: print "command failed in Installation.followCommand"
+        self.getEmitter(int(command[0][0]), int(command [0][1])).changeDefAngle(int(command[1]))
+        #except: print "command failed in Installation.followCommand"
         
     def obtainTargets(self):
         if gR.newTargetsFlag.isSet():
@@ -202,7 +203,8 @@ class Installation(threading.Thread):
                 if eRange[0] < target[0] and target[0] < eRange[1] and eRange[2] < target[1] and target[1] < eRange[3]:
                     targets[key] = target
         except:
-            print "Error in Installation.targetsInRange(). Probable Cause: No targets are being tracked"
+            pass
+            #print "Error in Installation.targetsInRange(). Probable Cause: No targets are being tracked"
         return targets            
     
     def getTarget(self, targetID):
@@ -247,7 +249,7 @@ class EmitterStatuses(object):
     def updateEmitter(self, emitter):
         emArLoc = emitter.getArrLocation()
         self.statuses.get( ( int(emArLoc[0]), int(emArLoc[1]) ) )[-2] = int(emitter.getState()) + int(emitter.getBulbState())
-        self.statuses.get( (int(emArLoc[0]), int(emArLoc[1])) )[-1] = math.degrees(emitter.getAngle() * emitter.getRotationMod() + emitter.getDefaultAngle())
+        self.statuses.get( (int(emArLoc[0]), int(emArLoc[1])) )[-1] = math.degrees( emitter.getAngle() * emitter.getRotationMod() + emitter.getDefaultAngle() )
     
     def printStatuses(self):
         print self.statuses

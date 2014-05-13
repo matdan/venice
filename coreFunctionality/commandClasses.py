@@ -52,9 +52,9 @@ class ManualControl(cmd.Cmd):
         if self.selectedEmitter:
             if not gR.newCommandFlag.isSet():
                 gR.lockDirectCommand.acquire(1)
-                gR.directCommand = (self.selectedEmitter, math.radians(angle))
-                gR.newCommandFlag.set()
+                gR.directCommand = (self.selectedEmitter, math.radians(float(angle)))
                 gR.lockDirectCommand.release()
+                gR.newCommandFlag.set()
                 time.sleep(0.01)
                 print "command issued to emitter ", self.selectedEmitter, " moved by ", angle
             else:
