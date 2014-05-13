@@ -75,11 +75,12 @@ if __name__ == '__main__':
     paths.append(3)
     paths.append(4)
     
-    myConfig = con.Configuration("config.csv")
+    myConfig = con.Configuration("configSim.csv")
+    #myConfig = con.Configuration("configCube.csv")
     gR.myEStats = ins.EmitterStatuses(myConfig)
-    myInstallationThread = ins.Installation(myConfig)
-    myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, paths)
-    #myCommunicationThread = log.Logger()
+    gR.myInstallationThread = ins.Installation(myConfig)
+    #myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, paths)
+    myCommunicationThread = log.Logger()
     
     
     #myTargetAcquisitionThread = tA.SensorData()
@@ -87,7 +88,7 @@ if __name__ == '__main__':
     myTargetAcquisitionThread = tA.FakeData()
     
     #operational
-    myInstallationThread.start()
+    gR.myInstallationThread.start()
     myCommunicationThread.start()
 
     #initiate cmd-control
@@ -96,9 +97,9 @@ if __name__ == '__main__':
     #operational
     myTargetAcquisitionThread.start()
     myTargetAcquisitionThread.join()
-    myInstallationThread.stop()
+    gR.myInstallationThread.stop()
     myCommunicationThread.stop()
-    myInstallationThread.join()
+    gR.myInstallationThread.join()
     myCommunicationThread.join()
     
     print "done"

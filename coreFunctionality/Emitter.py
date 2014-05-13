@@ -15,7 +15,7 @@ class Emitter(object):
         #print "initiating emitter at: " + str(self.phyLocation)
         self.arrLocation = arrLocation          #coordinates in emitterArray
         self.defaultAngle = math.radians(float(defaultAngle)) 
-        self.angle = math.radians(float(defaultAngle))
+        self.angle = 0
         self.installation = installation        #parent installation-object
         self.relayArduinoID = relayArduinoID
         self.servoArduinoID = servoArduinoID
@@ -74,7 +74,7 @@ class Emitter(object):
         '''
         self.defaultAngle += float(angle) * float(self.rotationMod)
         self.updateAngle(self.state)
-        self.communicateAngle()
+        self.updateEStatuses()
     
     def targetXDistance(self, targetID):
         return float(self.installation.getTarget(targetID)[0]) - float(self.phyLocation[0])
@@ -202,23 +202,7 @@ class Emitter(object):
         sets angle in degrees
         """
         self.angle = angle
-    """
-    def commandSlaves(self):
-        if self.state:
-            for slave in self.slaves:
-                slave.receiveCommand( float(self.angle), self.arrLocation )
-    
-    def receiveCommand(self, angle, origin):
-        self.commands = []
-        distance = abs(int(self.arrLocation[0]) - int(origin[0])) + abs(int(self.arrLocation[1]) - int(origin[1]))
-        self.commands.append((angle) * self.commandEffect(distance))        
-    
-    def commandEffect(self, distance):
-        effect = (math.sin((self.influence/2+distance)*math.pi/self.influence)/2+0.5)
-        if effect < 0.03:
-            effect = 0
-        return effect
-    """
+
     def commandSlaves(self):
         if self.state:
             for slave in self.slaves:
@@ -281,7 +265,7 @@ class Emitter(object):
         else:
             self.installation.registerSlave(self)
 
-    def communicateAngle(self):
+    def updateEStatuses(self):
         gR.myEStats.updateEmitter(self)
         
     def getState(self):
@@ -301,6 +285,14 @@ class Emitter(object):
         returns emitter's default angle
         '''
         return self.defaultAngle
+
+    def getArrLoc(self): 
+        return self.arrLocation     
     
-    def getArrLoc(self):
-        return self.arrLocation
+    def toggleBulb(self):
+        self.bulbActive = not self.bulbActive
+        self.state = self.bulbActive
+        self.updateEStatuses()
+        
+        
+    

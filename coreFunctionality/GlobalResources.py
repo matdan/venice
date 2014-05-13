@@ -18,6 +18,7 @@ myTargets = {}
 lockMyTargets = threading.Lock()
 newTargetsFlag = threading.Event()
 emitterUpdatedFlag = threading.Event()
+visUpdateReadyFlag = threading.Event()
 
 directCommand = {}
 lockDirectCommand = threading.Lock()
@@ -25,3 +26,6 @@ newCommandFlag = threading.Event()
 
 saveConfigFlag = threading.Event()
 lockSaveConfigFilename = threading.Lock()
+
+#threads
+myInstallationThread = None

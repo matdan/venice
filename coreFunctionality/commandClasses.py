@@ -24,15 +24,18 @@ class ManualControl(cmd.Cmd):
       
     def do_w(self, angle):
         if angle:
-            self.issueCommand(abs(float(angle))) 
+            self.issueCommand('a', abs(float(angle))) 
         else:
-            self.issueCommand(1.0) 
+            self.issueCommand('a', 1.0) 
         
     def do_s(self, angle):
         if angle:
-            self.issueCommand(-1 * abs(float(angle))) 
+            self.issueCommand('a', -1 * abs(float(angle))) 
         else:
-            self.issueCommand(-1) 
+            self.issueCommand('a', -1) 
+    
+    def do_bulb(self, x):
+        self.issueCommand('b', None)
     
     def do_EOF(self, line):
         return True
@@ -45,19 +48,19 @@ class ManualControl(cmd.Cmd):
             gR.lockSaveConfigFilename.release()
             
     
-    def issueCommand(self, angle):
+    def issueCommand(self, cType, payload):
         '''
         issues a command to rotate the selected emitter by angle
         '''
         if self.selectedEmitter:
             if not gR.newCommandFlag.isSet():
                 gR.lockDirectCommand.acquire(1)
-                gR.directCommand = (self.selectedEmitter, math.radians(float(angle)))
+                gR.directCommand = (self.selectedEmitter, cType, payload)
                 gR.lockDirectCommand.release()
                 gR.newCommandFlag.set()
                 time.sleep(0.01)
-                print "command issued to emitter ", self.selectedEmitter, " moved by ", angle
+                print "command issued to emitter ", self.selectedEmitter, "cType: ", cType, "payload: ", payload
             else:
-                print "command failed, flag set"
+                print "command failed, flag set, try again"
         else:
             print "command failed, no emitter selected"

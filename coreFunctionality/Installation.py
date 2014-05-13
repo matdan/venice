@@ -81,7 +81,7 @@ class Installation(threading.Thread):
     def updateUnits(self):
         for emitterRow in self.emitters:
             for emitter in emitterRow:
-                emitter.communicateAngle()
+                emitter.updateEStatuses()
     
     def invokeMasters(self):
         for emitterRow in self.emitters:
@@ -146,7 +146,8 @@ class Installation(threading.Thread):
             except IndexError:
                 return False
             except:
-                print "Unexpected Error while looking up emitter-location"
+                pass
+                #print "Unexpected Error while looking up emitter-location"
                 return False
         else:
             return False
@@ -156,10 +157,11 @@ class Installation(threading.Thread):
             if self.obtainTargets():
                 self.updateEmitters()
                 gR.emitterUpdatedFlag.set()
+                gR.visUpdateReadyFlag.set()
             if gR.newCommandFlag.isSet():
                 self.followCommand()
-                self.updateEmitters()
                 gR.emitterUpdatedFlag.set()
+                gR.visUpdateReadyFlag.set()
             if gR.saveConfigFlag.isSet():
                 gR.saveConfigFlag.clear()
                 self.saveConfig()
@@ -182,8 +184,21 @@ class Installation(threading.Thread):
         command = deepcopy(gR.directCommand)
         gR.lockDirectCommand.release()
         gR.newCommandFlag.clear()
-        self.getEmitter(int(command[0][0]), int(command [0][1])).changeDefAngle(int(command[1]))
-        #except: print "command failed in Installation.followCommand"
+        
+        cTargetX = int(command[0][0])
+        cTargetY = int(command[0][1])
+        targetEmitter = self.getEmitter(cTargetX, cTargetY)
+        cType = str(command[1])
+        cPayload = command[2]
+        
+        if cType == 'a':        #angle command
+            targetEmitter.changeDefAngle(math.radians(float(cPayload)))
+            print "angle"
+        elif cType == 'b':      #bulb command
+            targetEmitter.toggleBulb()
+            print "toggle"
+        else:
+            print "cType Error; cType: ", cType        
         
     def obtainTargets(self):
         if gR.newTargetsFlag.isSet():
