@@ -179,6 +179,14 @@ class Installation(threading.Thread):
         self.configuration.writeConfig(filename)
         self.configuration.loadConfig(filename)
     
+    def getEmitterALocs(self):
+        eALocList = []
+        for row in self.emitters:
+            for emitter in row:
+                aLoc = emitter.getArrLoc()
+                eALocList.append(str(aLoc[0]+str(aLoc[1])))
+        return eALocList
+    
     def followCommand(self):
         gR.lockDirectCommand.acquire(1)
         command = deepcopy(gR.directCommand)

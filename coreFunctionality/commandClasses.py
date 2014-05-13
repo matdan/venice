@@ -18,7 +18,8 @@ class ManualControl(cmd.Cmd):
         self.selectedEmitter = None
     
     def do_sel(self, arrLoc):
-        try: self.selectedEmitter = (int(arrLoc[0]),int(arrLoc[1]))
+        try:
+            self.selectedEmitter = (int(arrLoc[0]),int(arrLoc[1:]))
         except: print "selection failed"
         else: print "selection of emitter ", self.selectedEmitter, " successful"
       
@@ -36,7 +37,22 @@ class ManualControl(cmd.Cmd):
     
     def do_bulb(self, x):
         self.issueCommand('b', None)
-    
+        
+    def do_diagnoseRun(self, x):
+        eALocList = gR.myInstallationThread.getEmitterALocs()
+        print eALocList
+        for loc in eALocList:
+            self.do_sel(loc)
+            self.do_bulb(1)
+            time.sleep(0.1)
+            self.do_w(45)
+            time.sleep(1)
+            self.do_s(90)
+            time.sleep(0.5)
+            self.do_w(45)
+            self.do_bulb(1)
+            time.sleep(0.1)
+        
     def do_EOF(self, line):
         return True
     
