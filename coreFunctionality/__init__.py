@@ -72,18 +72,19 @@ if __name__ == '__main__':
     # mac path tends to look like this:
     #paths.append('/dev/tty.usbmodem1411')
     # windows path tends to look like this:
-    paths.append(2)
+    paths.append(3)
+    paths.append(4)
     
     myConfig = con.Configuration("config.csv")
     gR.myEStats = ins.EmitterStatuses(myConfig)
     myInstallationThread = ins.Installation(myConfig)
-    #myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, paths)
-    myCommunicationThread = log.Logger()
+    myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, paths)
+    #myCommunicationThread = log.Logger()
     
     
     #myTargetAcquisitionThread = tA.SensorData()
-    myTargetAcquisitionThread = tA.DataTest()
-    #myTargetAcquisitionThread = tA.FakeData()
+    #myTargetAcquisitionThread = tA.DataTest()
+    myTargetAcquisitionThread = tA.FakeData()
     
     #operational
     myInstallationThread.start()

@@ -72,10 +72,9 @@ class Emitter(object):
         '''
         changes emitter's self.defaultAngle by angle
         '''
-        self.defaultAngle += angle
+        self.defaultAngle += float(angle) * float(self.rotationMod)
         self.updateAngle(self.state)
         self.communicateAngle()
-        gR.emitterUpdatedFlag.set()
     
     def targetXDistance(self, targetID):
         return float(self.installation.getTarget(targetID)[0]) - float(self.phyLocation[0])
@@ -195,7 +194,6 @@ class Emitter(object):
             if i == 0:
                 self.setAngle(0)
             else:
-                print i
                 self.setAngle(comComb/i)
         
     def setAngle(self, angle):
