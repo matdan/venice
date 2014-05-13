@@ -5,19 +5,19 @@ Created on May 1, 2014
 '''
 
 import csv
+import GlobalResources as gR
 
 class Configuration(object):
     '''
     classdocs
     '''
 
-
     def __init__(self, filename):
         '''
         Constructor
         '''
-        self.eSpacing = 235
-        self.rSpacing = 1829
+        self.eSpacing = gR.eSpacing
+        self.rSpacing = gR.rSpacing
         self.emitterParams = 12
         self.loadConfig(filename)
         

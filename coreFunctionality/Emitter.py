@@ -14,8 +14,8 @@ class Emitter(object):
         self.phyLocation = phyLocation          #coorinates of physical location
         #print "initiating emitter at: " + str(self.phyLocation)
         self.arrLocation = arrLocation          #coordinates in emitterArray
-        self.defaultAngle = float(defaultAngle) 
-        self.angle = defaultAngle
+        self.defaultAngle = math.radians(float(defaultAngle)) 
+        self.angle = math.radians(float(defaultAngle))
         self.installation = installation        #parent installation-object
         self.relayArduinoID = relayArduinoID
         self.servoArduinoID = servoArduinoID
@@ -25,12 +25,12 @@ class Emitter(object):
         self.rotationMod = rotationMod              #TRUE for master, FALSE for slave
         #self.range = self.determineRange()       #list of (xMin, xMax, yMin, yMax)
         self.target = None                      #key of tracked target in installation's target dictionary
-        self.influence = 2
+        self.influence = 1
         self.slaves = None
         self.commands = []
         self.bulbActive = False
-        self.secondaryTarget = None
-        self.rangeExtension = self.installation.getRSpacing()
+        self.tertiaryTarget = None
+        self.rangeExtensionX = self.installation.getRSpacing()
         
     def determineStatus(self):
         """
@@ -38,86 +38,66 @@ class Emitter(object):
         sets state
         communicates state to installation
         """
-        #print "determining status of emiiter " + str(self.arrLocation)
-        #retrieve targets in emitter-range from installation as dictionary
         trackedTargetsInRange = self.installation.targetsInRange(self.range)
-#        try:
-#            if trackedTargetsInRange.values()[0][0] > self.range[1]:
-#                print 'problem'
-#        except:
-#            pass
-#        else:
-#            print 'tried'
-            
-        #print "targets in Range: " + str(trackedTargetsInRange)
-        #print "emitter-range: " +str(self.range)
-        
-
         
         if trackedTargetsInRange:
             #emitter has targets in range
-            
             if self.target != None and trackedTargetsInRange.has_key(self.target):
                 #emitter was already tracking a target and that target is still in its range
+                self.beMaster()
                 return
                 
             else:
                 #emitter was not tracking before but has targets in Range
-                
                 self.target = self.determineClosestTarget(trackedTargetsInRange)
                 self.beMaster()
+            
+            self.tertiaryTarget = None
                 
         else:
             self.target = None
-            extRange = [ self.range[0] - self.rangeExtension, self.range[1] + self.rangeExtension, self.range[2], self.range[3]  ]
-            
-            #print "Range = " + str(self.range)
-            #print "extRange = " + str(extRange)
-            trackedTargetsInExtRange = self.installation.targetsInRange(extRange)
+            trackedTargetsInExtRangeX = self.installation.targetsInRange(self.extRangeX)
 
-            if trackedTargetsInExtRange:
-                #print "target in ext range"
-                self.secondaryTarget = self.determineClosestTarget(trackedTargetsInExtRange)
+            if trackedTargetsInExtRangeX:
+                self.tertiaryTarget = self.determineClosestTarget(trackedTargetsInExtRangeX)
                 self.beMaster()
             else:
                 #no targets in range
-            
+                self.tertiaryTarget = None
                 self.beSlave()
-        #print "emitter is " + str(self.state)
-        self.communicateState()
+                
+        self.registerEmitter()
     
     def changeDefAngle(self, angle):
         '''
         changes emitter's self.defaultAngle by angle
         '''
         self.defaultAngle += angle
-        #print "command reached changeDefAngle in emitter ", self.arrLocation, "\nnew defaultAngle = ", self.defaultAngle
         self.updateAngle(self.state)
         self.communicateAngle()
-        #print "angle after defAng change ",self.angle
         gR.emitterUpdatedFlag.set()
     
     def targetXDistance(self, targetID):
         return float(self.installation.getTarget(targetID)[0]) - float(self.phyLocation[0])
     
+    def targetYDistance(self, targetID):
+        return float(self.installation.getTarget(targetID)[1]) - float(self.phyLocation[1])    
+    
     def getSlaves(self):
         """
         determine which slaves are influenced by master-emitter
         """
-        #print "looking for slaves"
         self.slaves = list()
         x=int(self.arrLocation[0])
         y=int(self.arrLocation[1])
+        
         #path 1 
         i=0
         while i < self.influence:
             i += 1
             
-            try: 
-                slaveCandidate = self.installation.getEmitter(x,y-i)
-            except:
-                break
-            
+            slaveCandidate = self.installation.getEmitter(x,y-i)
+            if not slaveCandidate: break
             if not slaveCandidate.isMaster():
                 self.slaves.append(slaveCandidate)
             else:
@@ -128,15 +108,12 @@ class Emitter(object):
         while i < self.influence:
             i += 1
             
-            try: 
-                slaveCandidate = self.installation.getEmitter(x,y+i)
-            except:
-                break
-            
+            slaveCandidate = self.installation.getEmitter(x,y+i)
+            if not slaveCandidate: break
             if not slaveCandidate.isMaster():
                 self.slaves.append(slaveCandidate)
             else:
-                break       
+                break      
 
     def determineClosestTarget(self, targetList):
         """
@@ -153,7 +130,6 @@ class Emitter(object):
         return self.state
         
     def determineRange(self):
-        #print "determining range of " + str(self.arrLocation)
         myArrX = int(self.arrLocation[0])
         myArrY = int(self.arrLocation[1])
         myPhyX = int(self.phyLocation[0])
@@ -184,12 +160,10 @@ class Emitter(object):
             maxY = maxYLoc[1]
         
         self.range = (int(minX), int(maxX), int(minY), int(maxY))
-        #print "pL: ", self.phyLocation
-        #print "r: ", self.range
         
-        #print "self.arrLocation = " + str(self.arrLocation)
-        #print "self.range = " + str(self.range)
-        
+    def determineExtRangeX(self):
+        self.extRangeX = [ self.range[0] - self.rangeExtensionX, self.range[1] + self.rangeExtensionX, self.range[2], self.range[3] ]
+    
     def updateAngle(self, masterOrSlave):
         if not masterOrSlave == self.state:
             return
@@ -197,26 +171,16 @@ class Emitter(object):
         if self.state:
             if self.target:
                 self.setAngle(self.angleToTarget(self.installation.getTarget(self.target)))
-            elif self.secondaryTarget:
-                distance = self.targetXDistance(self.secondaryTarget)
-                #if self.arrLocation[0] == '0' and self.arrLocation[1] == '4':
-                #print distance
-                #print "distance " + str(distance)
-                #maxAngle = abs(self.angleToTarget( [ float(self.range[1])-float(self.phyLocation[0]),0, 1200 ] ))
+            elif self.tertiaryTarget:
+                distance = self.targetXDistance(self.tertiaryTarget)
                 maxAngle = abs(self.angleToTarget( [ float(self.range[1]),0, 1200 ] ))
-                #print "maxAngle = ", vm.radToDeg(maxAngle)
                 if distance > 0:
                     relevantRange = self.range[1]
                     outOfRange = distance - (int(relevantRange) - int(self.phyLocation[0]))
-                    #print outOfRange
-                    #print vm.mapToDomain(outOfRange, 0, float(abs(relevantRange-float(self.phyLocation[0]))), maxAngle, 0)
                     self.setAngle(vm.mapToDomain(outOfRange, 0, float(abs(relevantRange-float(self.phyLocation[0]))), maxAngle, 0))
                 elif distance < 0:
                     relevantRange = self.range[0]
                     outOfRange = int(self.phyLocation[0]) - int(relevantRange) + distance
-                    #print "oor " + str(outOfRange)
-                    #print "reR ", relevantRange
-                    #print self.phyLocation
                     self.setAngle( vm.mapToDomain(outOfRange, 0, -1 * float(abs(relevantRange-float(self.phyLocation[0]))), -1 * float(maxAngle), 0) )
                 else:
                     raise Exception("Evil's afoot!")
@@ -231,21 +195,22 @@ class Emitter(object):
             if i == 0:
                 self.setAngle(0)
             else:
+                print i
                 self.setAngle(comComb/i)
         
     def setAngle(self, angle):
-        self.angle = float(self.defaultAngle) + math.degrees(angle)*float(self.rotationMod)
-    
+        """
+        takes in angle in RAD
+        sets angle in degrees
+        """
+        self.angle = angle
+    """
     def commandSlaves(self):
-        #print "slave commanded"
         if self.state:
-            #print "slave commanded2"
             for slave in self.slaves:
-                #print "slave commanded3"
-                slave.receiveCommand( math.radians(float(self.rotationMod)*(float(self.angle)-float(self.defaultAngle))), self.arrLocation )
+                slave.receiveCommand( float(self.angle), self.arrLocation )
     
     def receiveCommand(self, angle, origin):
-        #print "command received"
         self.commands = []
         distance = abs(int(self.arrLocation[0]) - int(origin[0])) + abs(int(self.arrLocation[1]) - int(origin[1]))
         self.commands.append((angle) * self.commandEffect(distance))        
@@ -255,8 +220,25 @@ class Emitter(object):
         if effect < 0.03:
             effect = 0
         return effect
+    """
+    def commandSlaves(self):
+        if self.state:
+            for slave in self.slaves:
+                if self.target:
+                    slave.receiveCommand( float(self.angle), self.target )
+                elif self.tertiaryTarget:
+                    slave.receiveCommand( float(self.angle), self.tertiaryTarget )
     
-    #def communicateStatus(self):
+    def receiveCommand(self, angle, target):
+        self.commands = []
+        distance = abs(self.targetYDistance(target))-gR.eSpacing
+        self.commands.append((angle) * self.commandEffect(distance))        
+    
+    def commandEffect(self, distance):
+        #if distance > (gR.eSpacing*(self.influence+1)):
+        #    return 0
+        effect = (math.sin(((gR.eSpacing*(self.influence)/2+distance)*math.pi/(gR.eSpacing*(self.influence))))/2+0.5)
+        return effect
     
     def angleToTarget(self, target):
         target3D = target
@@ -266,7 +248,6 @@ class Emitter(object):
         targetVector = vm.createVector(location2D, target2D)
         
         targetAngle = vm.angleBetween2D([0,-1], targetVector)
-        
         
         return targetAngle
         
@@ -296,23 +277,26 @@ class Emitter(object):
     def getArrLocation(self):
         return self.arrLocation
     
-    def communicateState(self):
+    def registerEmitter(self):
         if self.state:
             self.installation.registerMaster(self)
         else:
             self.installation.registerSlave(self)
 
     def communicateAngle(self):
-        
         gR.myEStats.updateEmitter(self)
-        #self.installation.logger.receiveState(self)
-        #self.installation.getComModule().updateEmitter(self.servoArduinoID, self.relayArduinoID, self.servoPin, self.relayPin, self.state, self.angle)
-    
+        
     def getState(self):
         return self.state
     
     def getAngle(self):
-        return self.angle
+        return float(self.angle)
+    
+    def getRotationMod(self):
+        '''
+        returns emitter's rotation modulator
+        '''
+        return float(self.rotationMod)
     
     def getDefaultAngle(self):
         '''

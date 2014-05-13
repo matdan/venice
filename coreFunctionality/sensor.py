@@ -2,6 +2,7 @@ import socket   #for sockets
 import sys  #for exit
 import GlobalResources as gR
 import threading
+from copy import deepcopy
 
 class SensorData(threading.Thread):
 	def __init__(self):
@@ -14,11 +15,21 @@ class SensorData(threading.Thread):
 		self._stopFlag = threading.Event()
 
 	def run(self):
-		pass
-		#while not self._stopFlag.isSet():
+		while not self._stopFlag.isSet():
 			#if gR.newTargetsFlag.isSet():
 			#   gR.newTargetsFlag.clear()
 			#   self.update_targets(gR.myTargets)
+			newTargets = self.receive_targets()
+			if not gR.newTargetsFlag.isSet():
+				gR.lockMyTargets.acquire()
+				gR.myTargets = deepcopy(newTargets)
+				gR.lockMyTargets.release()
+				gR.newTargetsFlag.set()
+				
+		
+	def stop (self):
+		self._stopFlag.set()
 
-	def update_targets(self, targets):
+	def receive_targets(self):
 		reply = self.s.recv(19)
+		return reply

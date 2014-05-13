@@ -80,13 +80,18 @@ if __name__ == '__main__':
     #myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, paths)
     myCommunicationThread = log.Logger()
     
+    
+    #myTargetAcquisitionThread = tA.SensorData()
     myTargetAcquisitionThread = tA.FakeData()
     
+    #operational
     myInstallationThread.start()
     myCommunicationThread.start()
 
+    #initiate cmd-control
     cC.ManualControl().cmdloop()
     
+    #operational
     myTargetAcquisitionThread.start()
     myTargetAcquisitionThread.join()
     myInstallationThread.stop()

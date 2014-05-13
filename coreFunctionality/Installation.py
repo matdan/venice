@@ -7,6 +7,7 @@ Created on Apr 30, 2014
 import Emitter
 import threading
 import GlobalResources as gR
+import math
 from copy import deepcopy
 
 class Installation(threading.Thread):
@@ -63,6 +64,7 @@ class Installation(threading.Thread):
         for emitterRow in self.emitters:
             for emitter in emitterRow:
                 emitter.determineRange()
+                emitter.determineExtRangeX()
     
     def updateEmitters(self):
             self.updateEmitterStates()     #masters are determined, states are communicated back to installation and respective unit
@@ -97,10 +99,9 @@ class Installation(threading.Thread):
             master.getSlaves()
         
     def getEmitter(self, x, y):
-        if not x < 0 and not y < 0:
-            return self.emitters[x][y]
-        else:
-            raise Exception("Index below 0... fool!")
+        if x<0 or y<0: return False
+        try: return self.emitters[x][y]
+        except: return False
         
     def registerMaster(self, emitter):
         '''
@@ -127,14 +128,6 @@ class Installation(threading.Thread):
             self.masters.remove(emitter)
         except:
             return
-
-    def setSlaveAngles(self):
-        """
-        Makes all registered SlaveEmitter-objects execute the setAngle method
-        no returns
-        """
-        for item in self.slaves:
-            item.setAngle()
 
     def actuateEmitters(self):
         """
@@ -253,9 +246,8 @@ class EmitterStatuses(object):
     
     def updateEmitter(self, emitter):
         emArLoc = emitter.getArrLocation()
-        #print "emStatNew", emStatNew
         self.statuses.get( ( int(emArLoc[0]), int(emArLoc[1]) ) )[-2] = int(emitter.getState()) + int(emitter.getBulbState())
-        self.statuses.get( (int(emArLoc[0]), int(emArLoc[1])) )[-1] = emitter.getAngle()
+        self.statuses.get( (int(emArLoc[0]), int(emArLoc[1])) )[-1] = math.degrees(emitter.getAngle() * emitter.getRotationMod() + emitter.getDefaultAngle())
     
     def printStatuses(self):
         print self.statuses

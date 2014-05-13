@@ -6,6 +6,12 @@ Created on May 8, 2014
 
 import threading
 
+remote_ip='128.30.79.98'
+port = 7000
+saveConfigFilename = 'config.csv'
+eSpacing = 235
+rSpacing = 1829
+
 myEStats = None
 lockMyEstates = threading.Lock()
 myTargets = None
@@ -18,5 +24,4 @@ lockDirectCommand = threading.Lock()
 newCommandFlag = threading.Event()
 
 saveConfigFlag = threading.Event()
-saveConfigFilename = 'config.csv'
 lockSaveConfigFilename = threading.Lock()

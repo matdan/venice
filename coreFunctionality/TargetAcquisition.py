@@ -8,6 +8,7 @@ import GlobalResources as gR
 import time
 import socket
 import csv
+from copy import deepcopy
 
 class FakeData(threading.Thread):
 
@@ -39,9 +40,9 @@ class FakeData(threading.Thread):
         """
         
         #fakeData2
-        for i in range(1100):
+        for i in range(700):
             gR.lockMyTargets.acquire(1)
-            gR.myTargets ={ 1:[-4000+i*10,600,1200],  2:[8000-i*10,1900,1200]}#, 2:[900,0+i*10,1200]}#, 3:[3600-i*5,3000-i*4,1200] }
+            gR.myTargets ={ 2:[900,-100+i*6,1200]}#1:[-4000+i*10,600,1200],  2:[8000-i*10,1900,1200]}#, 2:[900,0+i*10,1200]}#, 3:[3600-i*5,3000-i*4,1200] }
             gR.lockMyTargets.release()
             gR.newTargetsFlag.set()
             
@@ -51,30 +52,39 @@ class SensorData(threading.Thread):
     def __init__(self):
         super(SensorData, self).__init__()
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        remote_ip='128.30.79.98'
-        port = 7000
+        remote_ip = gR.remote_ip
+        port = gR.port
         self.s.connect((remote_ip , port))
         print 'Connected'
         self._stopFlag = threading.Event()
 
     def run(self):
         while not self._stopFlag.isSet():
-            gR.lockMyTargets.acquire(1)
-            try:
+            newTargets = self.receive_targets()
+            if not gR.newTargetsFlag.isSet() and newTargets:
+                self.forwardNewTargets(newTargets)
                 gR.newTargetsFlag.set()
-                self.update_targets(gR.myTargets)
-            finally:
-                gR.lockMyTargets.release()
 
     def stop(self):
         self._stop.set()
-
-    def update_targets(self, targets):
+        
+    def forwardNewTargets(self, newTargets):
+        gR.lockMyTargets.acquire(1)
+        
+        for key, target in newTargets.iteritems():
+            gR.myTargets[key] = target
+        
+        gR.lockMyTargets.release()
+            
+        
+        gR.lockMyTargets.release()
+    
+    def receive_targets(self, targets):
         reply = self.s.recv(19)
         x = reply.split(',')
         out = {}
         out[int(x[0])] = [int(float(x[1])), int(float(x[2]))]
-        gR.myTargets = out
+        return out
 
 
 class DataTest(threading.Thread):
