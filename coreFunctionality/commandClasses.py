@@ -6,6 +6,7 @@ Created on May 9, 2014
 import cmd
 import GlobalResources as gR
 import time
+import math
 
 class ManualControl(cmd.Cmd):
     '''
@@ -51,7 +52,7 @@ class ManualControl(cmd.Cmd):
         if self.selectedEmitter:
             if not gR.newCommandFlag.isSet():
                 gR.lockDirectCommand.acquire(1)
-                gR.directCommand = (self.selectedEmitter, angle)
+                gR.directCommand = (self.selectedEmitter, math.radians(angle))
                 gR.newCommandFlag.set()
                 gR.lockDirectCommand.release()
                 time.sleep(0.01)

@@ -3,7 +3,6 @@ Created on May 4, 2014
 
 @author: Matthias
 '''
-import math
 import threading
 import GlobalResources as gR
 from copy import deepcopy
