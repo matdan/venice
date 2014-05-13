@@ -30,7 +30,7 @@ class Emitter(object):
         self.commands = []
         self.bulbActive = False
         self.tertiaryTarget = None
-        self.rangeExtensionX = self.installation.getRSpacing()
+        self.rangeExtensionX = self.installation.getRSpacing()/2
         
     def determineStatus(self):
         """
@@ -177,11 +177,11 @@ class Emitter(object):
                 if distance > 0:
                     relevantRange = self.range[1]
                     outOfRange = distance - (int(relevantRange) - int(self.phyLocation[0]))
-                    self.setAngle(vm.mapToDomain(outOfRange, 0, float(abs(relevantRange-float(self.phyLocation[0]))), maxAngle, 0))
+                    self.setAngle(vm.mapToDomain(outOfRange, 0, float(abs(relevantRange-float(self.extRangeX[1]))), maxAngle, 0))
                 elif distance < 0:
                     relevantRange = self.range[0]
                     outOfRange = int(self.phyLocation[0]) - int(relevantRange) + distance
-                    self.setAngle( vm.mapToDomain(outOfRange, 0, -1 * float(abs(relevantRange-float(self.phyLocation[0]))), -1 * float(maxAngle), 0) )
+                    self.setAngle( vm.mapToDomain(outOfRange, 0, -1 * float(abs(relevantRange-float(self.extRangeX[0]))), -1 * float(maxAngle), 0) )
                 else:
                     raise Exception("Evil's afoot!")
                 

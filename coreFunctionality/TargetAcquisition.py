@@ -60,31 +60,29 @@ class SensorData(threading.Thread):
 
     def run(self):
         while not self._stopFlag.isSet():
-            newTargets = self.receive_targets()
+            try: newTarget = self.receive_targets()
             #if not gR.newTargetsFlag.isSet():
-            self.forwardNewTargets(newTargets)
-            print "new targets forwarded"
-            gR.newTargetsFlag.set()
+            except: print "Error in SensorData"
+            else:
+                self.forwardNewTargets(newTarget)
+                gR.newTargetsFlag.set()
 
     def stop(self):
         self._stopFlag.set()
         
-    def forwardNewTargets(self, newTargets):
-        print "forwarding"
+    def forwardNewTargets(self, newTarget):
         gR.lockMyTargets.acquire(1)
         
-        for key, target in newTargets.iteritems():
+        for key, target in newTarget.iteritems():
             gR.myTargets[key] = target
         
         gR.lockMyTargets.release()
     
     def receive_targets(self):
         reply = self.s.recv(19)
-        print "reply: ",reply
         x = reply.split(',')
         out = {}
-        out[int(x[0])] = [int(float(x[1])*1000), int(float(x[2])*1000)]
-        print out
+        out[int(x[0])] = [int(float(x[1])*1000), int(float(x[2])*1000),1200]
         return out
 
 
