@@ -51,39 +51,40 @@ class FakeData(threading.Thread):
 class SensorData(threading.Thread):
     def __init__(self):
         super(SensorData, self).__init__()
+        self._stopFlag = threading.Event()
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         remote_ip = gR.remote_ip
         port = gR.port
         self.s.connect((remote_ip , port))
         print 'Connected'
-        self._stopFlag = threading.Event()
 
     def run(self):
         while not self._stopFlag.isSet():
             newTargets = self.receive_targets()
-            if not gR.newTargetsFlag.isSet() and newTargets:
-                self.forwardNewTargets(newTargets)
-                gR.newTargetsFlag.set()
+            #if not gR.newTargetsFlag.isSet():
+            self.forwardNewTargets(newTargets)
+            print "new targets forwarded"
+            gR.newTargetsFlag.set()
 
     def stop(self):
-        self._stop.set()
+        self._stopFlag.set()
         
     def forwardNewTargets(self, newTargets):
+        print "forwarding"
         gR.lockMyTargets.acquire(1)
         
         for key, target in newTargets.iteritems():
             gR.myTargets[key] = target
         
         gR.lockMyTargets.release()
-            
-        
-        gR.lockMyTargets.release()
     
-    def receive_targets(self, targets):
+    def receive_targets(self):
         reply = self.s.recv(19)
+        print "reply: ",reply
         x = reply.split(',')
         out = {}
-        out[int(x[0])] = [int(float(x[1])), int(float(x[2]))]
+        out[int(x[0])] = [int(float(x[1])*1000), int(float(x[2])*1000)]
+        print out
         return out
 
 

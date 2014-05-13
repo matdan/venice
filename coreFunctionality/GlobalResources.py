@@ -14,7 +14,7 @@ rSpacing = 1829
 
 myEStats = None
 lockMyEstates = threading.Lock()
-myTargets = None
+myTargets = {}
 lockMyTargets = threading.Lock()
 newTargetsFlag = threading.Event()
 emitterUpdatedFlag = threading.Event()

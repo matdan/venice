@@ -81,8 +81,8 @@ if __name__ == '__main__':
     myCommunicationThread = log.Logger()
     
     
-    #myTargetAcquisitionThread = tA.SensorData()
-    myTargetAcquisitionThread = tA.FakeData()
+    myTargetAcquisitionThread = tA.SensorData()
+    #myTargetAcquisitionThread = tA.FakeData()
     
     #operational
     myInstallationThread.start()

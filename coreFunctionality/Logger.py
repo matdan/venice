@@ -30,8 +30,8 @@ class Logger(threading.Thread):
                 gR.emitterUpdatedFlag.clear()
                 oList = self.createOrederedList(gR.myEStats)
                 self.printArray(oList)
-                self.writeEmitterFile(oList)
-                self.writeTargetFile()
+                #self.writeEmitterFile(oList)
+                #self.writeTargetFile()
     
     def stop(self):
         self._stopFlag.set()
