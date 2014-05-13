@@ -73,6 +73,7 @@ if __name__ == '__main__':
     #paths.append('/dev/tty.usbmodem1411')
     # windows path tends to look like this:
     paths.append(3)
+    paths.append(4)
     
     myConfig = con.Configuration("config.csv")
     gR.myEStats = ins.EmitterStatuses(myConfig)
@@ -81,6 +82,7 @@ if __name__ == '__main__':
     #myCommunicationThread = log.Logger()
     
     myTargetAcquisitionThread = tA.FakeData()
+    #myTargetAcquisitionThread = tA.DataTest()
     
     myInstallationThread.start()
     myCommunicationThread.start()

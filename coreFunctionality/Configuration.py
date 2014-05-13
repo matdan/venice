@@ -86,7 +86,5 @@ class Configuration(object):
                 
     def loadConfig(self, filename):
         self.config = self.readConfig(filename)
-        print "self.config: ", self.config
         self.emitterConfig = self.createEmitterConfig(self.config)
-        print "self.emitterConfig: ", self.emitterConfig
         

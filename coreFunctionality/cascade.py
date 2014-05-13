@@ -85,17 +85,17 @@ class ArduinoDriver(threading.Thread):
 				#angle = 180
 			#elif angle < 0:
 			#	angle = 0
-
+			state = int(e[stateIndex])
 			# store the servo and bulb data in our complex data array
 			servoArduinoId = int(float(e[servoArduinoIndex]))
 			servoPin = int(float(e[servoPinIndex]))
 			tmp = self.data_store[servoArduinoId]
 			tmp[servoPin] = angle
 
-			#bulbArduinoId = int(float(e[bulbArduinoIndex]))
-			#bulbPin = int(float(e[bulbPinIndex]))
-			#tmp = self.data_store[bulbArduinoId]
-			#tmp[bulbPin] = int(float(stateIndex))
+			bulbArduinoId = int(float(e[bulbArduinoIndex]))
+			bulbPin = int(float(e[bulbPinIndex]))
+			tmp = self.data_store[bulbArduinoId]
+			tmp[bulbPin] = state
 
 	def updateArduinos(self):
 		# if enough time has elapsed since the last update, update arduinos
@@ -115,10 +115,9 @@ class ArduinoDriver(threading.Thread):
 					#print str(data[1])
 					serial_data = serial_data + str(data[1]).zfill(3)
 				serial_data = serial_data + "\0"
+				print serial_data
 				# send the data to an arduino
 				device.port.write(serial_data)
-				#print serial_data
-				#print 'hi'
 
 			# update the clock if you need a delay
 			self.last_update_time = time.clock()
