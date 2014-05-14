@@ -75,12 +75,12 @@ if __name__ == '__main__':
     paths.append(3)
     paths.append(4)
     
-    myConfig = con.Configuration("configSim.csv")
-    #myConfig = con.Configuration("configCube.csv")
+    #myConfig = con.Configuration("configSim.csv")
+    myConfig = con.Configuration("configCube.csv")
     gR.myEStats = ins.EmitterStatuses(myConfig)
     gR.myInstallationThread = ins.Installation(myConfig)
-    #myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, paths)
-    myCommunicationThread = log.Logger()
+    myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, paths)
+    #myCommunicationThread = log.Logger()
     
     
     #myTargetAcquisitionThread = tA.SensorData()

@@ -35,23 +35,59 @@ class ManualControl(cmd.Cmd):
         else:
             self.issueCommand('a', -1) 
     
-    def do_bulb(self, x):
+    def do_b(self, x):
         self.issueCommand('b', None)
         
-    def do_diagnoseRun(self, x):
+    def do_dR1(self, x):
         eALocList = gR.myInstallationThread.getEmitterALocs()
         print eALocList
         for loc in eALocList:
             self.do_sel(loc)
-            self.do_bulb(1)
-            time.sleep(0.1)
-            self.do_w(45)
+            self.do_b(1)
             time.sleep(1)
-            self.do_s(90)
-            time.sleep(0.5)
-            self.do_w(45)
-            self.do_bulb(1)
-            time.sleep(0.1)
+            for i in range(45):
+                self.do_w(1)
+                time.sleep(0.02)
+            time.sleep(1)
+            for i in range(90):
+                self.do_s(1)
+                time.sleep(0.02)
+            time.sleep(2)
+            for i in range(45):
+                self.do_w(1)
+                time.sleep(0.02)
+            time.sleep(1)
+            self.do_b(1)
+            time.sleep(1)
+
+    def do_dR2(self, x):
+        eALocList = gR.myInstallationThread.getEmitterALocs()
+        print eALocList
+        for loc in eALocList:
+            self.do_sel(loc)
+            self.do_b(1)
+            time.sleep(1)
+            self.do_b(1)
+            time.sleep(0.2)
+
+    def do_dR3(self, x):
+        eALocList = gR.myInstallationThread.getEmitterALocs()
+        print eALocList
+        for i in range(11):
+            for loc in eALocList:
+                self.do_sel(loc)
+                self.do_w(4)
+            #time.sleep(0.01)
+        for i in range(22):
+            for loc in eALocList:
+                self.do_sel(loc)
+                self.do_s(4)
+            #time.sleep(0.01)
+        for i in range(11):
+            for loc in eALocList:
+                self.do_sel(loc)
+                self.do_w(4)
+            #time.sleep(0.01)
         
     def do_EOF(self, line):
         return True

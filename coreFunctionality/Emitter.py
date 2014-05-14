@@ -25,7 +25,7 @@ class Emitter(object):
         self.rotationMod = rotationMod              #TRUE for master, FALSE for slave
         #self.range = self.determineRange()       #list of (xMin, xMax, yMin, yMax)
         self.target = None                      #key of tracked target in installation's target dictionary
-        self.influence = 1
+        self.influence = 2
         self.slaves = None
         self.commands = []
         self.bulbActive = False

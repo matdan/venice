@@ -9,6 +9,7 @@ import time
 import socket
 import csv
 from copy import deepcopy
+import math
 
 class FakeData(threading.Thread):
 
@@ -38,7 +39,7 @@ class FakeData(threading.Thread):
         gR.lockMyTargets.release()
         gR.newTargetsFlag.set()
         """
-        
+        """
         #fakeData2
         for i in range(200):
             gR.lockMyTargets.acquire(1)
@@ -50,7 +51,6 @@ class FakeData(threading.Thread):
             
             time.sleep(0.02)
 
-        """{2:[900,0+i*5,1200]}
         for i in range(800):
             gR.lockMyTargets.acquire(1)
             #gR.myTargets ={2:[900,0+i*5,1200]}#{ 1:[-4000+i*10,600,1200]}#,  2:[8000-i*10,1900,1200]}#, 2:[900,0+i*10,1200]}#, 3:[3600-i*5,3000-i*4,1200] }{ 2:[-500+i*8,2585-i*4,1200]}
@@ -72,6 +72,18 @@ class FakeData(threading.Thread):
             
             time.sleep(0.02)
         """
+        #fakeData3
+        for i in range(8000):
+            gR.lockMyTargets.acquire(1)
+            step = math.sin((float(i)/50.0-0.5)*math.pi/1.0)*(2585.0/2.0)+(2585.0/2.0)
+            step2 = math.sin((float(i)/50.0)*math.pi/1.0)*(1200.0/2.0)
+            gR.myTargets ={2:[1850+step2,step,1200],1:[1850-step2,2585.0-step,1200]}#, 3:[500,800,1200]}
+            gR.lockMyTargets.release()
+            gR.newTargetsFlag.set()
+            time.sleep(0.15)
+
+        gR.myTargets = {}
+        
 class SensorData(threading.Thread):
     def __init__(self):
         super(SensorData, self).__init__()
@@ -79,7 +91,7 @@ class SensorData(threading.Thread):
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         remote_ip = gR.remote_ip
         port = gR.port
-        self.s.connect((remote_ip , port))
+        print self.s.connect((remote_ip , port))
         print 'Connected'
 
     def run(self):
@@ -90,6 +102,7 @@ class SensorData(threading.Thread):
             else:
                 self.forwardNewTargets(newTarget)
                 gR.newTargetsFlag.set()
+                time.sleep(0.02)
 
     def stop(self):
         self._stopFlag.set()

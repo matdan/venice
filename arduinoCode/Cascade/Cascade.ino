@@ -33,6 +33,6 @@ void loop() {
       memmove(tempData, serialData + i * 3, 3);
       servos[i].write(atoi(tempData));
     }
-    delay(15);
+    delay(20);
   }
 }

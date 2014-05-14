@@ -1,6 +1,6 @@
 import glob
 import operator
-#import serial
+import serial
 import sys
 import time
 import threading
@@ -125,8 +125,8 @@ class ArduinoDriver(threading.Thread):
 	# opens all the arduinos as configured in __init__.py
 	def open_ports(self):
 		print 'opening ports'
-		#for device in self.devices:
-			#device.port = serial.Serial(device.path, 9600)
+		for device in self.devices:
+			device.port = serial.Serial(device.path, 9600)
 
 	# close all the arduinos
 	def close_ports(self):
