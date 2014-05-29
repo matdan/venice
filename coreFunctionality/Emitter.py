@@ -44,13 +44,13 @@ class Emitter(object):
             #emitter has targets in range
             if self.target != None and trackedTargetsInRange.has_key(self.target):
                 #emitter was already tracking a target and that target is still in its range
-                self.beMaster()
+                self.beMaster(True)
                 return
                 
             else:
                 #emitter was not tracking before but has targets in Range
                 self.target = self.determineClosestTarget(trackedTargetsInRange)
-                self.beMaster()
+                self.beMaster(True)
             
             self.tertiaryTarget = None
                 
@@ -60,7 +60,7 @@ class Emitter(object):
 
             if trackedTargetsInExtRangeX:
                 self.tertiaryTarget = self.determineClosestTarget(trackedTargetsInExtRangeX)
-                self.beMaster()
+                self.beMaster(False)
             else:
                 #no targets in range
                 self.tertiaryTarget = None
@@ -239,16 +239,19 @@ class Emitter(object):
         if self.state:
             self.state = False
             
-    def beMaster(self):
+    def beMaster(self, primaryMaster):
         self.commands = []
-        if not self.state:
-            self.state = True
-        
-        if self.target:
-            if not self.bulbActive:
+        self.state = True
+
+        if primaryMaster:
+            if self.installation.bulbAvailable(self.arrLocation):                
                 self.bulbActive = True
+            else:
+                self.bulbActive = False
+
         else:
             self.bulbActive = False
+
     
     def getBulbState(self):
         return self.bulbActive

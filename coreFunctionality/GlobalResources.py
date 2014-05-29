@@ -30,3 +30,6 @@ lockSaveConfigFilename = threading.Lock()
 #threads
 myInstallationThread = None
 myVisualizationDG = None
+
+maxBulbsArray = 2
+maxBulbs = 12

@@ -43,6 +43,7 @@ class Installation(threading.Thread):
         self.trackedTargets = None #{"ID1":(1000, 650, 1000)}
         self.operating = False
         self._stop = threading.Event()
+        self.activeBulbs = []
         #self.operate()
 
     #def getComModule(self):
@@ -54,12 +55,35 @@ class Installation(threading.Thread):
     def stop(self):
         self._stop.set()
     
+    def bulbAvailable(self, arrLoc)
+        row = arrLoc[0]
+        arrayInRow = floor(arrLoc[1]/6)*6
+
+        #determine actives in same emArray
+        arActives = 0
+        for i in range(6):
+            if self.activeBulbs[row, arrayInRow*6+i]:
+                arActives += 1
+        if arActives >= gR.maxBulbsArray:
+            return False
+        actives = 0
+        for row in self.activeBulbs:
+            for bulb in row:
+                if bulb:
+                    actives += 1
+        if actives >= gR.maxBulbs:
+            return False
+        return True
+
+
     def initiateEmitters(self):
         for i in self.configuration.getEmitterConfig():
             self.emitters.append(list())
+            self.activeBulbs.append(list())
             for j in i:
                 self.emitters[-1].append( Emitter.Emitter( self, ( j[0], j[1], j[2] ), ( j[3], j[4] ), j[5], j[6], j[7], j[8], j[9], j[10], j[11] ) )
-    
+                self.activeBulbs[-1].append(0)
+
     def initiateEmittersPhase2(self):
         for emitterRow in self.emitters:
             for emitter in emitterRow:
