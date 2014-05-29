@@ -60,6 +60,18 @@ class Logger(threading.Thread):
         except:
             print "file write error"
             
+    def writeBulbFile(self, orderedList):
+        try:
+            with open('eBulbs.csv', 'wb') as csvfile:
+                spamwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                for row in orderedList:
+                    nextRow = []
+                    for emitter in row:
+                        nextRow.append( emitter[0] )
+                    spamwriter.writerow(nextRow)
+        except:
+            print "file write error"
+            
     def createOrederedList(self, emitterStatuses):
         gR.lockMyEstates.acquire(1)
         statusDic = deepcopy(emitterStatuses.getStatuses())
