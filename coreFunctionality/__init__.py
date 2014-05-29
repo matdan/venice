@@ -89,7 +89,7 @@ if __name__ == '__main__':
     #myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, paths)
     myCommunicationThread = log.Logger()
     
-    gR.myVisualizationDG = dG.VisulaizationGateway("localwarmingdev.meteor.com")
+    #gR.myVisualizationDG = dG.VisulaizationGateway("localwarmingdev.meteor.com")
 
     #myTargetAcquisitionThread = tA.SensorData()
     #myTargetAcquisitionThread = tA.DataTest()
@@ -100,7 +100,7 @@ if __name__ == '__main__':
     #operational
     gR.myInstallationThread.start()
     myCommunicationThread.start()
-    gR.myVisualizationDG.start()
+    #gR.myVisualizationDG.start()
     
 
     #initiate cmd-control
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     myCommunicationThread.stop()
     gR.myInstallationThread.join()
     myCommunicationThread.join()
-    gR.myVisualizationDG.stop()
-    gR.myVisualizationDG.join()
+    #gR.myVisualizationDG.stop()
+    #gR.myVisualizationDG.join()
     
     print "done"
