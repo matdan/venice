@@ -42,7 +42,6 @@ class Configuration(object):
         configArray = list()
         for row in configReader:
             configArray.append(row)
-        #print configArray
         return configArray
         
     def getEmitterConfig (self):
@@ -62,17 +61,13 @@ class Configuration(object):
     
     def writeConfig(self, filename):
         outputList = []
-        print self.emitterConfig
         
         for h, row in enumerate(self.emitterConfig):
             for i in range(self.emitterParams):
                 outputList.append([])
                 
-                #for emitter in row:
-                    #outputList[-1].append('')
                     
             for emitter in row:
-                print "emitter ",emitter
                 
                 for i, param in  enumerate(emitter):
                     outputList[h*self.emitterParams+i].append(param)

@@ -28,7 +28,7 @@ class Logger(threading.Thread):
             if gR.emitterUpdatedFlag.isSet():
                 gR.emitterUpdatedFlag.clear()
                 oList = self.createOrederedList(gR.myEStats)
-                self.printArray(oList)
+                #self.printArray(oList)
                 self.writeEmitterFile(oList)
                 self.writeTargetFile()
     

@@ -294,5 +294,7 @@ class Emitter(object):
         self.state = self.bulbActive
         self.updateEStatuses()
         
+    def getTarget(self):
+        return self.target
         
     

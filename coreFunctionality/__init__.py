@@ -65,6 +65,7 @@ import TargetAcquisition as tA
 import time
 import commandClasses as cC
 import cascade
+import DataGateway as dG
 
 if __name__ == '__main__':
     
@@ -75,21 +76,32 @@ if __name__ == '__main__':
     paths.append(3)
     paths.append(4)
     
+    
+
+    myConfig = con.Configuration("configBiennale.csv")
     #myConfig = con.Configuration("configSim.csv")
-    myConfig = con.Configuration("configCube.csv")
+    #myConfig = con.Configuration("configCube.csv")
+    
     gR.myEStats = ins.EmitterStatuses(myConfig)
+    
     gR.myInstallationThread = ins.Installation(myConfig)
-    myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, paths)
-    #myCommunicationThread = log.Logger()
     
+    #myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, paths)
+    myCommunicationThread = log.Logger()
     
+    gR.myVisualizationDG = dG.VisulaizationGateway("localwarmingdev.meteor.com")
+
     #myTargetAcquisitionThread = tA.SensorData()
     #myTargetAcquisitionThread = tA.DataTest()
     myTargetAcquisitionThread = tA.FakeData()
     
+    
+
     #operational
     gR.myInstallationThread.start()
     myCommunicationThread.start()
+    gR.myVisualizationDG.start()
+    
 
     #initiate cmd-control
     cC.ManualControl().cmdloop()
@@ -101,5 +113,7 @@ if __name__ == '__main__':
     myCommunicationThread.stop()
     gR.myInstallationThread.join()
     myCommunicationThread.join()
+    gR.myVisualizationDG.stop()
+    gR.myVisualizationDG.join()
     
     print "done"

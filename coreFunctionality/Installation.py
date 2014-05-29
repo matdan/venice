@@ -242,6 +242,22 @@ class Installation(threading.Thread):
     def getEmitterList(self):
         return self.emitters
 
+    def targetData(self):
+        try:
+            targetsData = []
+            for targetID, targetLoc in self.trackedTargets.iteritems():
+                dedicatedEmitters = []
+                for row in self.emitters:
+                    for emitter in row:
+                        if emitter.getTarget() == targetID:
+                            arrLoc = emitter.getArrLocation()
+                            dedicatedEmitters.append(arrLoc)
+                targetData = { 'id':targetID, 'position':{'x':targetLoc[0], 'y':targetLoc[1]}, 'lenses':dedicatedEmitters }
+                targetsData.append(targetData)
+            return targetsData
+        except:
+            return None
+
 class EmitterStatuses(object):
     
     def __init__(self, configuration):
