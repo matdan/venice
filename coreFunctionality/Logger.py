@@ -31,6 +31,7 @@ class Logger(threading.Thread):
                 #self.printArray(oList)
                 self.writeEmitterFile(oList)
                 self.writeTargetFile()
+                self.writeBulbFile(oList)
     
     def stop(self):
         self._stopFlag.set()
