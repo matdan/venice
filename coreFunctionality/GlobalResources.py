@@ -39,4 +39,4 @@ maxBulbsArray = 3
 maxBulbs = 24
 
 #arduino addresses
-paths = []
+path = []

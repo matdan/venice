@@ -27,6 +27,7 @@ class ArduinoDriver(threading.Thread):
 		self.arduino_delay = 0.0
 
 		for i,path in enumerate(paths):
+			print path
 			self.devices.append(Device(i, path))
 
 		self.data_store = []
@@ -126,7 +127,8 @@ class ArduinoDriver(threading.Thread):
 	def open_ports(self):
 		print 'opening ports'
 		for device in self.devices:
-			device.port = serial.Serial(device.path, 9600)
+			print device.path
+			device.port = serial.Serial(int(device.path)-1, 9600)
 
 	# close all the arduinos
 	def close_ports(self):

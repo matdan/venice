@@ -11,6 +11,7 @@ import Logger as log
 import TargetAcquisition as tA
 import threading
 import DataGateway as dG
+import cascade
 
 class ManualControl(cmd.Cmd):
     '''
@@ -115,12 +116,17 @@ class ManualControl(cmd.Cmd):
             print "preview not active"
 
     def do_startArduinos(self, args):
-        if not gR.myCommunicationThread.isALive():
-            gR.myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, gR.paths)
+        try:
+            if not gR.myCommunicationThread.isALive():
+                gR.myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, gR.path)
+                gR.myCommunicationThread.start()
+                print "arduino communication started"
+            else:
+                print "arduino communication already active"
+        except:
+            gR.myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, gR.path)
             gR.myCommunicationThread.start()
             print "arduino communication started"
-        else:
-            print "arduino communication already active"
 
     def do_stopArduinos(self, args):
         if gR.myCommunicationThread.isAlive():
@@ -242,12 +248,17 @@ class InstallationControl(cmd.Cmd):
             print "preview not active"
 
     def do_startArduinos(self, args):
-        if not gR.myCommunicationThread.isALive():
-            gR.myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, gR.paths)
+        try:
+            if not gR.myCommunicationThread.isALive():
+                gR.myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, gR.path)
+                gR.myCommunicationThread.start()
+                print "arduino communication started"
+            else:
+                print "arduino communication already active"
+        except:
+            gR.myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, gR.path)
             gR.myCommunicationThread.start()
             print "arduino communication started"
-        else:
-            print "arduino communication already active"
 
     def do_stopArduinos(self, args):
         if gR.myCommunicationThread.isAlive():

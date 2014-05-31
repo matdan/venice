@@ -72,11 +72,12 @@ if __name__ == '__main__':
     # mac path tends to look like this:
     #paths.append('/dev/tty.usbmodem1411')
     # windows path tends to look like this:
-    gR.paths.append(10)
-    gR.paths.append(6)
-    gR.paths.append(7)
-    gR.paths.append(8)
-    gR.paths.append(9)
+    gR.path = []
+    gR.path.append(10)
+    gR.path.append(8)
+    gR.path.append(7)
+    gR.path.append(6)
+    gR.path.append(9)
     
     
 
@@ -89,7 +90,7 @@ if __name__ == '__main__':
     gR.myInstallationThread = ins.Installation(myConfig)
     
     #myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, paths)
-    gR.myPreviewThread = log.Logger()
+    #gR.myPreviewThread = log.Logger()
     
     #gR.myVisualizationDG = dG.VisulaizationGateway("localwarmingdev.meteor.com")
 
