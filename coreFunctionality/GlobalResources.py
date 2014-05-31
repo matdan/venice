@@ -30,6 +30,13 @@ lockSaveConfigFilename = threading.Lock()
 #threads
 myInstallationThread = None
 myVisualizationDG = None
+myCommunicationThread = None
+myTargetAcquisitionThread = None
+myVisualizationDG = None
 
-maxBulbsArray = 2
-maxBulbs = 12
+
+maxBulbsArray = 3
+maxBulbs = 24
+
+#arduino addresses
+paths = []

@@ -69,12 +69,11 @@ import DataGateway as dG
 
 if __name__ == '__main__':
     
-    paths = []
     # mac path tends to look like this:
     #paths.append('/dev/tty.usbmodem1411')
     # windows path tends to look like this:
-    paths.append(3)
-    paths.append(4)
+    gR.paths.append(3)
+    gR.paths.append(4)
     
     
 
@@ -87,33 +86,32 @@ if __name__ == '__main__':
     gR.myInstallationThread = ins.Installation(myConfig)
     
     #myCommunicationThread = cascade.ArduinoDriver(gR.myEStats, paths)
-    myCommunicationThread = log.Logger()
+    gR.myPreviewThread = log.Logger()
     
     #gR.myVisualizationDG = dG.VisulaizationGateway("localwarmingdev.meteor.com")
 
-    #myTargetAcquisitionThread = tA.SensorData()
-    #myTargetAcquisitionThread = tA.DataTest()
-    myTargetAcquisitionThread = tA.FakeData()
     
     
 
     #operational
     gR.myInstallationThread.start()
-    myCommunicationThread.start()
+    #gR.myCommunicationThread.start()
     #gR.myVisualizationDG.start()
     
 
     #initiate cmd-control
     cC.ManualControl().cmdloop()
+    cC.InstallationControl().cmdloop()
     
+    """
     #operational
-    myTargetAcquisitionThread.start()
-    myTargetAcquisitionThread.join()
+    gR.myTargetAcquisitionThread.start()
+    gR.myTargetAcquisitionThread.join()
     gR.myInstallationThread.stop()
-    myCommunicationThread.stop()
+    gR.myCommunicationThread.stop()
     gR.myInstallationThread.join()
-    myCommunicationThread.join()
+    gR.myCommunicationThread.join()
     #gR.myVisualizationDG.stop()
     #gR.myVisualizationDG.join()
-    
+    """
     print "done"

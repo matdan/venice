@@ -83,6 +83,8 @@ class FakeData(threading.Thread):
             time.sleep(0.15)
 
         gR.myTargets = {}
+        print "target acquisition thread done"
+        return
         
 class SensorData(threading.Thread):
     def __init__(self):

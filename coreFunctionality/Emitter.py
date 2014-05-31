@@ -246,8 +246,10 @@ class Emitter(object):
         if primaryMaster:
             if self.installation.bulbAvailable(self.arrLocation):                
                 self.bulbActive = True
+                self.installation.registerBulb(self.arrLocation)
             else:
                 self.bulbActive = False
+
 
         else:
             self.bulbActive = False
