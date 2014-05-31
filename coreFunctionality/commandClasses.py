@@ -53,21 +53,21 @@ class ManualControl(cmd.Cmd):
         for loc in eALocList:
             self.do_sel(loc)
             self.do_b(1)
-            time.sleep(1)
+            time.sleep(0.1)
             for i in range(45):
                 self.do_w(1)
-                time.sleep(0.02)
+                time.sleep(0.002)
             time.sleep(1)
             for i in range(90):
                 self.do_s(1)
-                time.sleep(0.02)
+                time.sleep(0.002)
             time.sleep(2)
             for i in range(45):
                 self.do_w(1)
-                time.sleep(0.02)
-            time.sleep(1)
+                time.sleep(0.002)
+            time.sleep(0.1)
             self.do_b(1)
-            time.sleep(1)
+            time.sleep(0.1)
 
     def do_dR2(self, x):
         eALocList = gR.myInstallationThread.getEmitterALocs()
