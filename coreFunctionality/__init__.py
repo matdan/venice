@@ -72,8 +72,11 @@ if __name__ == '__main__':
     # mac path tends to look like this:
     #paths.append('/dev/tty.usbmodem1411')
     # windows path tends to look like this:
-    gR.paths.append(3)
-    gR.paths.append(4)
+    gR.paths.append(10)
+    gR.paths.append(6)
+    gR.paths.append(7)
+    gR.paths.append(8)
+    gR.paths.append(9)
     
     
 
