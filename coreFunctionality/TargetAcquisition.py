@@ -77,7 +77,7 @@ class FakeData(threading.Thread):
             gR.lockMyTargets.acquire(1)
             step = math.sin((float(i)/50.0-0.5)*math.pi/1.0)*(2585.0/2.0)+(2585.0/2.0)
             step2 = math.sin((float(i)/50.0)*math.pi/1.0)*(1200.0/2.0)
-            gR.myTargets ={2:[1850+(2*step2),step,1200],1:[1850-(2*step2),2585.0-(step),1200]}#, 3:[500,800,1200]}
+            gR.myTargets ={2:[1850*1.5+(3*step2),step*1.5,1200],1:[1850*1.5-(3*step2),2585.0*1.5-(1.5*step),1200]}#, 3:[500,800,1200]}
             gR.lockMyTargets.release()
             gR.newTargetsFlag.set()
             time.sleep(0.15)
