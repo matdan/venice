@@ -73,15 +73,13 @@ if __name__ == '__main__':
     #paths.append('/dev/tty.usbmodem1411')
     # windows path tends to look like this:
     gR.path = []
-    gR.path.append(10)
     gR.path.append(8)
-    gR.path.append(7)
-    gR.path.append(6)
-    gR.path.append(9)
+    gR.path.append(10)
+    gR.path.append(None)
     
     
 
-    myConfig = con.Configuration("configBiennale.csv")
+    myConfig = con.Configuration("configBiennaleREDUCED.csv")
     #myConfig = con.Configuration("configSim.csv")
     #myConfig = con.Configuration("configCube.csv")
     

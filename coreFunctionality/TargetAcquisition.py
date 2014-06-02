@@ -73,7 +73,7 @@ class FakeData(threading.Thread):
             time.sleep(0.02)
         """
         #fakeData3
-        for i in range(80):
+        for i in range(100):
             gR.lockMyTargets.acquire(1)
             step = math.sin((float(i)/50.0-0.5)*math.pi/1.0)*(2585.0/2.0)+(2585.0/2.0)
             step2 = math.sin((float(i)/50.0)*math.pi/1.0)*(1200.0/2.0)

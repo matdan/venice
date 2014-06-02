@@ -28,7 +28,8 @@ class ArduinoDriver(threading.Thread):
 
 		for i,path in enumerate(paths):
 			print path
-			self.devices.append(Device(i, path))
+			if path:
+				self.devices.append(Device(i, path))
 
 		self.data_store = []
 
@@ -118,7 +119,8 @@ class ArduinoDriver(threading.Thread):
 				serial_data = serial_data + "\0"
 				print "sending data: ", serial_data,"\n"
 				# send the data to an arduino
-				device.port.write(serial_data)
+				if device.path:
+					device.port.write(serial_data)
 
 			# update the clock if you need a delay
 			self.last_update_time = time.clock()
@@ -128,10 +130,12 @@ class ArduinoDriver(threading.Thread):
 		print 'opening ports'
 		for device in self.devices:
 			print device.path
-			device.port = serial.Serial(int(device.path)-1, 9600)
+			if device.path:
+				device.port = serial.Serial(int(device.path)-1, 9600)
 
 	# close all the arduinos
 	def close_ports(self):
 		print 'closing ports'
 		for device in self.devices:
-			device.port.close()
+			if path:
+				device.port.close()

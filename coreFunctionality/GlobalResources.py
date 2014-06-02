@@ -33,7 +33,7 @@ myVisualizationDG = None
 myCommunicationThread = None
 myTargetAcquisitionThread = None
 myVisualizationDG = None
-
+myPreviewThread = None
 
 maxBulbsArray = 3
 maxBulbs = 24

@@ -99,13 +99,18 @@ class ManualControl(cmd.Cmd):
             #time.sleep(0.01)
 
     def do_startPreview(self, args):
-
-        if not gR.myPreviewThread.isAlive():
-            gR.myPreviewThread =  log.Logger()
+        try:
+            if not gR.myPreviewThread.isAlive():
+                gR.myPreviewThread =  log.Logger()
+                gR.myPreviewThread.start()
+                print "communication to rhino preview started"
+            else:
+                print "communication to rhino preview already running"
+        except:
+            gR.myPreviewThread = log.Logger()
             gR.myPreviewThread.start()
             print "communication to rhino preview started"
-        else:
-            print "communication to rhino preview already running"
+
 
     def do_stopPreview(self, args):
         if gR.myPreviewThread.isAlive():
@@ -218,7 +223,7 @@ class InstallationControl(cmd.Cmd):
             else:
                 print "communication to visualisation thread already running"
         except:
-            gR.myVisualizationDG = dG.VisulaizationGateway("localwarmingdev.meteor.com")
+            gR.myVisualizationDG = dG.VisulaizationGateway("192.168.2.76:3000")
             gR.myVisualizationDG.start()
             print "communication to visualisation thread started"
 
@@ -230,14 +235,19 @@ class InstallationControl(cmd.Cmd):
         else:
             print "visThread not active"
 
-    def do_startPreview(self, args):
 
-        if not gR.myPreviewThread.isAlive():
-            gR.myPreviewThread =  log.Logger()
+    def do_startPreview(self, args):
+        try:
+            if not gR.myPreviewThread.isAlive():
+                gR.myPreviewThread =  log.Logger()
+                gR.myPreviewThread.start()
+                print "communication to rhino preview started"
+            else:
+                print "communication to rhino preview already running"
+        except:
+            gR.myPreviewThread = log.Logger()
             gR.myPreviewThread.start()
             print "communication to rhino preview started"
-        else:
-            print "communication to rhino preview already running"
 
     def do_stopPreview(self, args):
         if gR.myPreviewThread.isAlive():

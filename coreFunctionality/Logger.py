@@ -26,13 +26,14 @@ class Logger(threading.Thread):
     def run(self):
         while not self._stopFlag.isSet():
             if gR.emitterUpdatedFlag.isSet():
+                print "check2"
                 gR.emitterUpdatedFlag.clear()
                 oList = self.createOrederedList(gR.myEStats)
-                #self.printArray(oList)
+                self.printArray(oList)
                 self.writeEmitterFile(oList)
                 self.writeTargetFile()
                 self.writeBulbFile(oList)
-    
+                
     def stop(self):
         self._stopFlag.set()
     
@@ -40,7 +41,7 @@ class Logger(threading.Thread):
         gR.lockMyTargets.acquire()
         targets = deepcopy(gR.myTargets)
         gR.lockMyTargets.release()
-        #print targets.values()
+        print targets.values()
         try:
             with open('targets.csv', 'wb') as csvfile:
                 spamwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
@@ -76,12 +77,12 @@ class Logger(threading.Thread):
     def createOrederedList(self, emitterStatuses):
         gR.lockMyEstates.acquire(1)
         statusDic = deepcopy(emitterStatuses.getStatuses())
-        gR.lockMyEstates.release()
         orderedList = [[]]
         row = 0
         column = 0
         fails = 0
         while 1:
+            print "looping"
             emitterStats = statusDic.get( ( int(row), int(column) ) )
             if emitterStats == None:
                 if fails<2:
@@ -98,7 +99,9 @@ class Logger(threading.Thread):
                 fails = 0
                 orderedList[row].append( [ emitterStats[-2], emitterStats[-1] ] )
                 column += 1
-                
+
+        gR.lockMyEstates.release()
+        
         return orderedList
     
     def printArray(self, orderedList):
