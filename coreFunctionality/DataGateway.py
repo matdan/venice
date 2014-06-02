@@ -26,7 +26,7 @@ class VisulaizationGateway(threading.Thread):
 	def sendData(self):
 		data = self.createData()
 		self.app.do_call("gateway [\"khu8dqMtLeuUxkZUu9sPHtqVxTCxyr\","+json.dumps(data)+"]")
-		#print json.dumps(data)
+		print json.dumps(data)
 
 	def createData(self):
 		targetData = self.retrieveTargetData()
