@@ -116,7 +116,7 @@ class ArduinoDriver(threading.Thread):
 					#print str(data[1])
 					serial_data = serial_data + str(data[1]).zfill(3)
 				serial_data = serial_data + "\0"
-				print serial_data,"\n"
+				print "sending data: ", serial_data,"\n"
 				# send the data to an arduino
 				device.port.write(serial_data)
 
