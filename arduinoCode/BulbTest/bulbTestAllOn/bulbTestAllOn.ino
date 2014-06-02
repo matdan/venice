@@ -4,20 +4,4 @@ const int numBulbs = sizeof(bulbPins)/sizeof(int);
 char serialData[numBulbs * 3];
 char tempData[3];
 
-void setup() {
-  for (int i=0; i < numBulbs; i++) {
-    pinMode(bulbPins[i], OUTPUT); 
-    digitalWrite(bulbPins[i], LOW);
-  }
-}
-
-void loop() {
-  for (int i=0; i < 53; i++) {
-    digitalWrite(i+1, HIGH);
-  }
-  delay(2000);
-  for (int i=0; i < 53; i++) {
-    digitalWrite(i+1, LOW);
-  }
-  delay(2000);
-}
+void setup() {}
