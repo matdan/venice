@@ -18,6 +18,7 @@ class Device:
 		self.id_num = id_num
 		self.path = path
 		self.values = {}
+		self.last_update_time = 0
 
 	def readState(self, pin, value):
 		self.values[pin] = value
@@ -34,7 +35,7 @@ class ArduinoDriver(threading.Thread):
 		# indexes to device paths
 		self.devices = []
 		self.last_update_time = time.clock()
-		self.arduino_delay = 0.05
+		self.arduino_delay = 0
 
 		for i,path in enumerate(paths):
 			print path
@@ -56,14 +57,15 @@ class ArduinoDriver(threading.Thread):
 	def run(self):
         #[arrayLocation] : [ servoArduinoID, relayArduinoID, servoPin, relayPin, state, angle(DEG) ]
 		while not self._stopFlag.isSet():
-			if gR.emitterUpdatedFlag.isSet():
-				gR.emitterUpdatedFlag.clear()
-
-				self.readEmitterStates()
-				#try:
-				self.updateArduinos()
-				#except: print "arduino write error"
-
+			elapsed = (time.clock() - self.last_update_time)
+			if elapsed > self.arduino_delay:
+				if gR.emitterUpdatedFlag.isSet():
+					gR.emitterUpdatedFlag.clear()
+					self.readEmitterStates()
+					try:
+						self.updateArduinos()
+					except: print "arduino write error"
+					self.last_update_time = time.clock()
 
 	def stop(self):
 		self.close_ports()
@@ -80,8 +82,7 @@ class ArduinoDriver(threading.Thread):
 
 	def updateArduinos(self):
 		# if enough time has elapsed since the last update, update arduinos
-		elapsed = (time.clock() - self.last_update_time)
-		if elapsed > self.arduino_delay:
+		
 			#print 'data_store:'
 			#print self.data_store
 			#print 'devices:'
@@ -96,14 +97,13 @@ class ArduinoDriver(threading.Thread):
 					serial_data = serial_data + str(data).zfill(3)
 				
 
+				#serial_data = serial_data + "\0"
 				serial_data = serial_data + "\0"
 				print "sending data to port: ", device.path,"\n", serial_data,"\n"
 				# send the data to an arduino
 				if device.path:
 					device.port.write(serial_data)
 
-			# update the clock if you need a delay
-			self.last_update_time = time.clock()
 
 	# opens all the arduinos as configured in __init__.py
 	def open_ports(self):
@@ -112,10 +112,11 @@ class ArduinoDriver(threading.Thread):
 			print device.path
 			if device.path:
 				device.port = serial.Serial(int(device.path)-1, 9600)
+		time.sleep(1.5)
 
 	# close all the arduinos
 	def close_ports(self):
 		print 'closing ports'
 		for device in self.devices:
-			if path:
+			if device.path:
 				device.port.close()

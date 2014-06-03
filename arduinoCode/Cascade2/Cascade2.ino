@@ -11,27 +11,44 @@ int servoPins[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,16, 19, 20, 21, 22
 const int numServos = sizeof(servoPins)/sizeof(int);
 Servo servos[numServos];
 
+String inputString = "";         // a string to hold incoming data
+boolean stringComplete = false;  // whether the string is complete
+
 char serialData[numServos * 3];
 char tempData[3];
 
 void setup() {
+  // initialize serial:
   Serial.begin(9600);
   Serial.println("Ready");
+  // reserve 200 bytes for the inputString:
+  inputString.reserve(200);
   for (int i=0; i < numServos; i++) {
     servos[i].attach(servoPins[i]);
-    //servos[i].write(20);
+    servos[i].write(90);
   }
 }
 
 void loop() {
-  if (Serial.available()) {
-    Serial.readBytesUntil('\0', serialData, numServos * 3);
-    
+  if (stringComplete) {
     for (int i=0; i < numServos; i++) {
-      memmove(tempData, serialData + i * 3, 3);
-      servos[i].write(atoi(tempData));
+      int value = inputString.substring(i*3, i*3+3).toInt();
+      servos[i].write(value);
     }
-    delay(50);
   }
 }
 
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read(); 
+    // if the incoming character is a newline, set a flag
+    // so the main loop can do something about it:
+    if (inChar == '/n') {
+      stringComplete = true;
+      break;
+    } 
+    // add it to the inputString:
+    inputString += inChar;
+  }
+}

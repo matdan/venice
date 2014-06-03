@@ -68,12 +68,12 @@ import cascade
 import DataGateway as dG
 
 if __name__ == '__main__':
-    
+
     # mac path tends to look like this:
     #paths.append('/dev/tty.usbmodem1411')
     # windows path tends to look like this:
     gR.path = []
-    gR.path.append(8)#2-servo2
+    gR.path.append(11)#2-servo2
     gR.path.append(10)#3-servo3
     gR.path.append(None)#4-bulb1
     
