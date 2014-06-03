@@ -39,39 +39,37 @@ class FakeData(threading.Thread):
         gR.lockMyTargets.release()
         gR.newTargetsFlag.set()
         """
-        """
+        
         #fakeData2
-        for i in range(200):
+        for i in range(450):
             gR.lockMyTargets.acquire(1)
-            gR.myTargets = { 1:[600,0+i*12,1200]}#,  2:[8000-i*10,1900,1200], 3:[3600-i*5,3000-i*4,1200] }#{ 2:[-500+i*8,2585-i*4,1200]}
-            #gR.myTargets = { 1:[-4000+i*10,600,1200]}
+            #gR.myTargets = { 1:[600,0+i*12,1200]}#,  2:[8000-i*10,1900,1200], 3:[3600-i*5,3000-i*4,1200] }#{ 2:[-500+i*8,2585-i*4,1200]}
+            gR.myTargets = { 1:[1000,1650+i*5,1200], 2:[4800,1650+i*5,1200]}
             #gR.myTargets = { 2:[-500+i*8,2585-i*4,1200]}
             gR.lockMyTargets.release()
             gR.newTargetsFlag.set()
             
             time.sleep(0.02)
-
-        for i in range(800):
+        for i in range(450):
             gR.lockMyTargets.acquire(1)
-            #gR.myTargets ={2:[900,0+i*5,1200]}#{ 1:[-4000+i*10,600,1200]}#,  2:[8000-i*10,1900,1200]}#, 2:[900,0+i*10,1200]}#, 3:[3600-i*5,3000-i*4,1200] }{ 2:[-500+i*8,2585-i*4,1200]}
-            gR.myTargets = { 1:[-4000+i*10,600,1200]}
+            #gR.myTargets = { 1:[600,0+i*12,1200]}#,  2:[8000-i*10,1900,1200], 3:[3600-i*5,3000-i*4,1200] }#{ 2:[-500+i*8,2585-i*4,1200]}
+            gR.myTargets = { 1:[1000,1650+i*5,1200], 2:[4800,1650+i*5,1200]}
             #gR.myTargets = { 2:[-500+i*8,2585-i*4,1200]}
-            gR.lockMyTargets.release()
-            gR.newTargetsFlag.set()
-            
-            time.sleep(0.02)
-
-
-        for i in range(800):
-            gR.lockMyTargets.acquire(1)
-            #gR.myTargets ={2:[900,0+i*5,1200]}#{ 1:[-4000+i*10,600,1200]}#,  2:[8000-i*10,1900,1200]}#, 2:[900,0+i*10,1200]}#, 3:[3600-i*5,3000-i*4,1200] }{ 2:[-500+i*8,2585-i*4,1200]}
-            #gR.myTargets = { 1:[-4000+i*10,600,1200]}
-            gR.myTargets = { 2:[-500+i*8,2585-i*4,1200]}
             gR.lockMyTargets.release()
             gR.newTargetsFlag.set()
             
             time.sleep(0.02)
         """
+        for i in range(800,0):
+            gR.lockMyTargets.acquire(1)
+            #gR.myTargets = { 1:[600,0+i*12,1200]}#,  2:[8000-i*10,1900,1200], 3:[3600-i*5,3000-i*4,1200] }#{ 2:[-500+i*8,2585-i*4,1200]}
+            gR.myTargets = { 1:[1000,1650+i*5,1200]}
+            #gR.myTargets = { 2:[-500+i*8,2585-i*4,1200]}
+            gR.lockMyTargets.release()
+            gR.newTargetsFlag.set()
+            
+            time.sleep(0.02)
+        
         #fakeData3
         for i in range(100):
             gR.lockMyTargets.acquire(1)
@@ -81,6 +79,7 @@ class FakeData(threading.Thread):
             gR.lockMyTargets.release()
             gR.newTargetsFlag.set()
             time.sleep(0.15)
+        """
 
         gR.myTargets = {}
         print "target acquisition thread done"

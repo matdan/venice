@@ -184,19 +184,16 @@ class Installation(threading.Thread):
     def operate (self):
         while not self._stop.isSet():
             if self.obtainTargets():
-                print "1"
                 self.clearBulbSates()
                 self.updateEmitters()
                 gR.emitterUpdatedFlag.set()
                 gR.visUpdateReadyFlag.set()
             if gR.newCommandFlag.isSet():
-                print "2"
                 self.clearBulbSates()
                 self.followCommand()
                 gR.emitterUpdatedFlag.set()
                 gR.visUpdateReadyFlag.set()
             if gR.saveConfigFlag.isSet():
-                print "3"
                 gR.saveConfigFlag.clear()
                 self.saveConfig()
     
@@ -295,7 +292,7 @@ class Installation(threading.Thread):
                         if emitter.getTarget() == targetID:
                             arrLoc = emitter.getArrLocation()
                             dedicatedEmitters.append(arrLoc)
-                targetData = { 'id':targetID, 'position':{'x':targetLoc[0], 'y':targetLoc[1]}, 'lenses':dedicatedEmitters }
+                targetData = { 'id':targetID, 'position':{'x':int(targetLoc[0]), 'y':int(targetLoc[1])}, 'lenses':dedicatedEmitters }
                 targetsData.append(targetData)
             return targetsData
         except:

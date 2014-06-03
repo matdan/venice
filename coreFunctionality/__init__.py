@@ -73,9 +73,9 @@ if __name__ == '__main__':
     #paths.append('/dev/tty.usbmodem1411')
     # windows path tends to look like this:
     gR.path = []
-    gR.path.append(8)
-    gR.path.append(10)
-    gR.path.append(None)
+    gR.path.append(8)#2-servo2
+    gR.path.append(10)#3-servo3
+    gR.path.append(None)#4-bulb1
     
     
 

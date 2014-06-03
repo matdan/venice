@@ -6,6 +6,7 @@
 */
 #include <Servo.h> 
 
+//int servoPins[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25};
 int servoPins[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,16, 19, 20, 21, 22, 23, 24, 25,26,27,28}; //servoArduino3
 //int servoPins[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 //int servoPins[] = {14, 16, 19, 20, 21, 22, 23, 24, 25,26,27,28};#servoArduino3
@@ -14,7 +15,7 @@ int servoPins[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,16, 19, 20, 21, 22
 
 const int numServos = sizeof(servoPins)/sizeof(int);
 Servo servos[numServos];
-int myDelay = 10;
+int myDelay = 1;
 
 char serialData[numServos * 3];
 char tempData[3];

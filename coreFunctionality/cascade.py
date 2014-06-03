@@ -17,21 +17,28 @@ class Device:
 	def __init__(self, id_num, path):
 		self.id_num = id_num
 		self.path = path
+		self.values = {}
+
+	def readState(self, pin, value):
+		self.values[pin] = value
+
+	def getSortedValues(self):
+		pinList = self.values.keys()
+		valueList = self.values.values()
+		pinList, valueList = zip(*sorted(zip(pinList, valueList)))
+		return valueList
 
 class ArduinoDriver(threading.Thread):
-	def __init__(self, emitters, paths):
+	def __init__(self, emitterStats, paths):
 		super(ArduinoDriver, self).__init__()
 		# indexes to device paths
 		self.devices = []
 		self.last_update_time = time.clock()
-		self.arduino_delay = 0.0
+		self.arduino_delay = 0.05
 
 		for i,path in enumerate(paths):
 			print path
-			if path:
-				self.devices.append(Device(i, path))
-
-		self.data_store = []
+			self.devices.append(Device(i, path))
 
 		# architecture of data_store
 		# list of devices (arduinos)
@@ -40,64 +47,36 @@ class ArduinoDriver(threading.Thread):
 		# values of dictionary are angle/state
 		# example:
 		#[{pin:angle}, {pin:state}, {pin:angle}, {pin:state}, ...]
-		for path in paths:
-			self.data_store.append({})
 
-		self.unwrapEmitters(emitters.getStatuses())
+		self.readEmitterStates()
 		self.open_ports()
-		#self.updateArduinos()
+
 		self._stopFlag = threading.Event()
 
 	def run(self):
+        #[arrayLocation] : [ servoArduinoID, relayArduinoID, servoPin, relayPin, state, angle(DEG) ]
 		while not self._stopFlag.isSet():
 			if gR.emitterUpdatedFlag.isSet():
 				gR.emitterUpdatedFlag.clear()
-				gR.lockMyEstates.acquire(1)
-				try:
-					self.unwrapEmitters(gR.myEStats.getStatuses())
-					self.updateArduinos()
-				finally:
-					gR.lockMyEstates.release()
+
+				self.readEmitterStates()
+				#try:
+				self.updateArduinos()
+				#except: print "arduino write error"
+
 
 	def stop(self):
 		self.close_ports()
 		self._stopFlag.set()
 
-	def unwrapEmitters(self, wrapped_emitters):
-		emitters = []
-		for i,emitter in enumerate(wrapped_emitters.itervalues()):
-			emitters.append(emitter)
-		self.updateEmitters(emitters)
+	def readEmitterStates(self):
+		gR.lockMyEstates.acquire(1)
+		newStates = gR.myEStats.getStatuses()
+		gR.lockMyEstates.release()
 
-	def updateEmitters(self, emitters):
-		servoArduinoIndex = 0
-		bulbArduinoIndex = 1
-		servoPinIndex = 2
-		bulbPinIndex = 3
-		stateIndex = 4
-		angleIndex = 5
-
-		# fill the data_store with emitters
-		for e in emitters:
-			#print type(e[angleIndex])
-			angle = int(float(e[angleIndex]))
-			#angle = angle
-			# constrain the servo angle, just in case
-			#if angle > 180:
-				#angle = 180
-			#elif angle < 0:
-			#	angle = 0
-			state = int(e[stateIndex])
-			# store the servo and bulb data in our complex data array
-			servoArduinoId = int(float(e[servoArduinoIndex]))
-			servoPin = int(float(e[servoPinIndex]))
-			tmp = self.data_store[servoArduinoId]
-			tmp[servoPin] = angle
-
-			bulbArduinoId = int(float(e[bulbArduinoIndex]))
-			bulbPin = int(float(e[bulbPinIndex]))
-			tmp = self.data_store[bulbArduinoId]
-			tmp[bulbPin] = state
+		for key, value in newStates.iteritems():
+			self.devices[int(value[0])-1].readState(int(value[2]),int(value[5]))
+			self.devices[int(value[1])-1].readState(int(value[3]),int(value[4]))
 
 	def updateArduinos(self):
 		# if enough time has elapsed since the last update, update arduinos
@@ -108,16 +87,17 @@ class ArduinoDriver(threading.Thread):
 			#print 'devices:'
 			#print self.devices
 			# iterate over arduinos to send data to
-			for device,datum in zip(self.devices,self.data_store):
-				serial_data = ''
-				sorted_data = sorted(datum.iteritems(), key=operator.itemgetter(0))
-				# the string of data sent over serial
-				# states and angles are padded to 3 spaces
-				for data in sorted_data:
+
+
+			for device in self.devices:
+				serial_data = ""
+				for data in device.getSortedValues():
 					#print str(data[1])
-					serial_data = serial_data + str(data[1]).zfill(3)
+					serial_data = serial_data + str(data).zfill(3)
+				
+
 				serial_data = serial_data + "\0"
-				print "sending data: ", serial_data,"\n"
+				print "sending data to port: ", device.path,"\n", serial_data,"\n"
 				# send the data to an arduino
 				if device.path:
 					device.port.write(serial_data)

@@ -26,13 +26,12 @@ class Logger(threading.Thread):
     def run(self):
         while not self._stopFlag.isSet():
             if gR.emitterUpdatedFlag.isSet():
-                print "check2"
                 gR.emitterUpdatedFlag.clear()
                 oList = self.createOrederedList(gR.myEStats)
                 self.printArray(oList)
-                self.writeEmitterFile(oList)
-                self.writeTargetFile()
-                self.writeBulbFile(oList)
+                #self.writeEmitterFile(oList)
+                #self.writeTargetFile()
+                #self.writeBulbFile(oList)
                 
     def stop(self):
         self._stopFlag.set()

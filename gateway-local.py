@@ -8,7 +8,7 @@ from random import randint
 
 def main():
     
-    app = ddpclient.App("127.0.0.1:3000", False)
+    app = ddpclient.App("192.168.2.76:3000", False)
     time.sleep(1);
      
     while True:
@@ -32,7 +32,7 @@ def main():
 	
 	# object
 	data= [{
-		'timestamp': timestamp, 
+		#'timestamp': timestamp, 
 		'balls': balls
 	}]
 	
@@ -42,8 +42,8 @@ def main():
 	# call
 	app.do_call("gateway [\"khu8dqMtLeuUxkZUu9sPHtqVxTCxyr\","+json.dumps(data)+"]")
 
-	req = urllib2.Request("http://localhost:3000/receive/khu8dqMtLeuUxkZUu9sPHtqVxTCxyr/30.20")
-	res = urllib2.urlopen(req)
+	#req = urllib2.Request("192.168.2.76:3000")
+	#res = urllib2.urlopen(req)
 	# wait 2 secs
 	time.sleep(1)
     
